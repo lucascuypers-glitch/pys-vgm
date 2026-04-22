@@ -1640,9 +1640,11 @@ function openWerf(id){
     var firstTab = document.querySelector('.tab-btn');
     if(firstTab){ switchTab('rondgang', firstTab); }
     window.scrollTo(0,0);
-    // Trigger sync when opening a werf if connected
+    // Sync bij openen werf — alleen als token geldig
     if(driveIsConnected() && navigator.onLine){
       setTimeout(function(){ driveSync(true); }, 2000);
+    } else if(!driveIsConnected()){
+      updateDriveBtnState(); // toon herverbinden knop
     }
   });
 }
@@ -1948,16 +1950,13 @@ function initApp(){
     updateDriveBtnState();
     updateSyncBadge();
     startAutoSync();
-    // Auto-reconnect: use hardcoded ID first, then localStorage
+    // Auto-sync als token nog geldig is, anders wacht op gebruiker
     var autoId = DRIVE_CLIENT_ID || driveClientId;
-    if(autoId){
-      driveClientId = autoId;
-      if(!driveIsConnected()){
-        setTimeout(function(){ driveConnect(true); }, 2000);
-      } else {
-        setTimeout(function(){ driveSync(true); }, 3000);
-      }
+    if(autoId) driveClientId = autoId;
+    if(driveIsConnected()){
+      setTimeout(function(){ driveSync(true); }, 3000);
     }
+    // Token verlopen? updateDriveBtnState toont 'Herverbinden' knop
   }).catch(function(e){
     console.error('IndexedDB error:', e);
     showToast('Database fout — gebruik Chrome/Safari','');
@@ -3103,10 +3102,7 @@ function driveIsConnected(){
   if(!driveToken.expires_at) return true;
   // Expired?
   if(Date.now() > driveToken.expires_at) return false;
-  // Nearly expired (< 5 min)? Trigger silent refresh
-  if(Date.now() > driveToken.expires_at - 5 * 60 * 1000){
-    if(driveClientId) setTimeout(function(){ driveConnect(true); }, 100);
-  }
+  // Token bijna verlopen? Wordt zichtbaar via updateDriveBtnState
   return true;
 }
 
@@ -3126,12 +3122,10 @@ function driveConnect(silent){
   var tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: driveClientId,
     scope: DRIVE_SCOPES,
-    prompt: silent ? 'none' : '',  // silent refresh = geen popup
+    // prompt omitted — Google hergebruikt bestaande sessie
     callback: function(resp){
       if(resp.error === 'interaction_required' || resp.error === 'consent_required'){
-        // Silent failed — need user interaction
-        driveConnect(false);
-        return;
+        updateDriveBtnState(); return;
       }
       if(resp.error){
         if(!silent) showToast('Login mislukt: ' + resp.error,'');
@@ -3203,10 +3197,8 @@ function driveRequest(method, url, body, contentType){
       driveToken = null;
       driveSaveConfig();
       var reconnectId = DRIVE_CLIENT_ID || driveClientId;
-      if(reconnectId){
-        driveClientId = reconnectId;
-        setTimeout(function(){ driveConnect(true); }, 500);
-      }
+      if(reconnectId) driveClientId = reconnectId;
+      // Toon herverbinden knop — gebruiker moet zelf klikken
       updateDriveBtnState();
       throw new Error('Token verlopen — herverbinden...');
     }
