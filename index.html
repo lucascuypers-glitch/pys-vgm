@@ -566,7 +566,7 @@ select option{background:#1e293b;}
     <div class="dash-title hd">Power<span>Yourself</span></div>
     <div style="display:flex;align-items:center;gap:.5rem;">
       <div style="font-size:.66rem;color:#94a3b8;" id="dash-sync-status">Lokaal opgeslagen</div>
-      <div class="dash-drive-wrap"><button class="dash-sync-btn" id="dash-drive-btn" onclick="openDriveModal()">Drive sync</button><span class="sync-badge" id="sync-badge" style="display:none;">0</span></div>
+      <div class="dash-drive-wrap"><button class="dash-sync-btn" id="dash-drive-btn" onclick="driveIsConnected()?driveSync():openDriveModal()">Drive sync</button><span class="sync-badge" id="sync-badge" style="display:none;">0</span></div>
     </div>
   </div>
   <div class="dash-body">
@@ -1639,6 +1639,10 @@ function openWerf(id){
     var firstTab = document.querySelector('.tab-btn');
     if(firstTab){ switchTab('rondgang', firstTab); }
     window.scrollTo(0,0);
+    // Trigger sync when opening a werf if connected
+    if(driveIsConnected() && navigator.onLine){
+      setTimeout(function(){ driveSync(true); }, 2000);
+    }
   });
 }
 
@@ -1943,6 +1947,12 @@ function initApp(){
     updateDriveBtnState();
     updateSyncBadge();
     startAutoSync();
+    // Auto-reconnect if we have a client ID but no valid token
+    if(driveClientId && !driveIsConnected()){
+      setTimeout(function(){ driveConnect(true); }, 2000);
+    } else if(driveIsConnected()){
+      setTimeout(function(){ driveSync(true); }, 3000);
+    }
   }).catch(function(e){
     console.error('IndexedDB error:', e);
     showToast('Database fout — gebruik Chrome/Safari','');
@@ -3040,15 +3050,27 @@ function openDriveModal(){
   var btnWrap = document.getElementById('drv-btn-wrap');
   var connBtn = document.getElementById('drv-connect-btn');
 
+  var ls = localStorage.getItem('pys_drive_last_sync');
   if(driveIsConnected()){
     setup.style.display = 'none';
     conn.style.display  = 'block';
     connBtn.style.display = 'none';
     var accTxt = document.getElementById('drv-account-txt');
     var lastTxt = document.getElementById('drv-last-sync-txt');
-    if(accTxt) accTxt.textContent = 'Ingelogd — token actief';
-    var ls = localStorage.getItem('pys_drive_last_sync');
+    if(accTxt) accTxt.textContent = 'Verbonden en actief';
     if(lastTxt) lastTxt.textContent = ls
+      ? 'Laatste sync: ' + new Date(ls).toLocaleString('nl-BE')
+      : 'Nog nooit gesynchroniseerd';
+  } else if(driveClientId){
+    // Have client ID but token expired/missing — show reconnect button
+    setup.style.display = 'none';
+    conn.style.display  = 'block';
+    connBtn.style.display = '';
+    connBtn.textContent = 'Opnieuw verbinden';
+    var accTxt3 = document.getElementById('drv-account-txt');
+    var lastTxt3 = document.getElementById('drv-last-sync-txt');
+    if(accTxt3) accTxt3.textContent = 'Token verlopen — klik hieronder om opnieuw te verbinden';
+    if(lastTxt3) lastTxt3.textContent = ls
       ? 'Laatste sync: ' + new Date(ls).toLocaleString('nl-BE')
       : 'Nog nooit gesynchroniseerd';
   } else {
@@ -3066,13 +3088,20 @@ function closeDriveModal(){
 // ── IS CONNECTED ───────────────────────────────────────────────
 function driveIsConnected(){
   if(!driveToken) return false;
-  if(driveToken.expires_at && Date.now() > driveToken.expires_at) return false;
+  if(!driveToken.expires_at) return true;
+  // Expired?
+  if(Date.now() > driveToken.expires_at) return false;
+  // Nearly expired (< 5 min)? Trigger silent refresh
+  if(Date.now() > driveToken.expires_at - 5 * 60 * 1000){
+    if(driveClientId) setTimeout(function(){ driveConnect(true); }, 100);
+  }
   return true;
 }
 
 // ── CONNECT via Google Identity Services ──────────────────────
-function driveConnect(){
-  var inputId = document.getElementById('drv-client-id').value.trim();
+function driveConnect(silent){
+  var inputId = document.getElementById('drv-client-id') ?
+    document.getElementById('drv-client-id').value.trim() : driveClientId;
   if(!inputId){ showToast('Voer eerst je Client ID in',''); return; }
   driveClientId = inputId;
   driveSaveConfig();
@@ -3080,24 +3109,36 @@ function driveConnect(){
     showToast('Google Identity Services laadt nog. Probeer opnieuw.','');
     return;
   }
-  var client = google.accounts.oauth2.initTokenClient({
+  var tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: driveClientId,
     scope: DRIVE_SCOPES,
+    prompt: silent ? 'none' : '',  // silent refresh = geen popup
     callback: function(resp){
-      if(resp.error){ showToast('Login mislukt: ' + resp.error,''); return; }
+      if(resp.error === 'interaction_required' || resp.error === 'consent_required'){
+        // Silent failed — need user interaction
+        driveConnect(false);
+        return;
+      }
+      if(resp.error){
+        if(!silent) showToast('Login mislukt: ' + resp.error,'');
+        return;
+      }
       driveToken = {
         access_token: resp.access_token,
         expires_at:   Date.now() + (resp.expires_in - 60) * 1000
       };
       driveSaveConfig();
-      closeDriveModal();
+      if(!silent){
+        closeDriveModal();
+        showToast('Verbonden met Google Drive!','success');
+      }
       updateDriveBtnState();
-      showToast('Verbonden met Google Drive!','success');
-      // Trigger first sync right away
-      driveSync();
+      updateAutoSyncBar();
+      // Trigger sync
+      driveSync(silent);
     }
   });
-  client.requestAccessToken();
+  tokenClient.requestAccessToken();
 }
 
 function driveDisconnect(){
@@ -3120,6 +3161,10 @@ function updateDriveBtnState(){
     btn.className = 'dash-sync-btn connected';
     btn.textContent = 'Drive sync';
     if(stat) stat.textContent = 'Drive verbonden';
+  } else if(driveClientId){
+    btn.className = 'dash-sync-btn error';
+    btn.textContent = 'Herverbinden';
+    if(stat) stat.textContent = 'Token verlopen — klik om opnieuw in te loggen';
   } else {
     btn.className = 'dash-sync-btn';
     btn.textContent = 'Drive sync';
@@ -3140,8 +3185,15 @@ function driveRequest(method, url, body, contentType){
     body: body
   }).then(function(r){
     if(r.status === 401){
-      driveToken = null; driveSaveConfig(); updateDriveBtnState();
-      throw new Error('Token verlopen — log opnieuw in via Drive sync');
+      // Try silent token refresh first
+      driveToken = null;
+      driveSaveConfig();
+      if(driveClientId){
+        // schedule silent reconnect
+        setTimeout(function(){ driveConnect(true); }, 500);
+      }
+      updateDriveBtnState();
+      throw new Error('Token verlopen — herverbinden...');
     }
     if(!r.ok) throw new Error('Drive API fout: ' + r.status);
     if(r.status === 204) return null;
@@ -3230,8 +3282,13 @@ function driveDeleteFile(fileId){
 //  FULL SYNC LOGIC
 // ═══════════════════════════════════════════════════════════════
 function driveSync(silent){
+  if(!driveToken && driveClientId){
+    // Token missing but we have client ID — try silent reconnect
+    driveConnect(true);
+    return;
+  }
   if(!driveIsConnected()){
-    showToast('Niet verbonden met Drive','');
+    if(!silent) showToast('Niet verbonden met Drive — klik op Drive sync om in te loggen','');
     return;
   }
   showSyncOverlay('Verbinden met Google Drive...', '');
@@ -3560,7 +3617,7 @@ function renderSyncLog(){
 
 // ── AUTO-SYNC ─────────────────────────────────────────────────
 var autoSyncTimer = null;
-var AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
+var AUTO_SYNC_INTERVAL = 2 * 60 * 1000; // 2 minutes
 
 function startAutoSync(){
   stopAutoSync();
