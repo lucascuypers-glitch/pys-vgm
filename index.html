@@ -620,7 +620,7 @@ select option{background:#1e293b;}
         Maak OAuth 2.0 Client ID aan als <strong>Web application</strong><br>
         Voeg toe bij Authorized origins: <em>het adres waar je de app opent</em></div>
       </div>
-      <div class="drv-step active">
+      <div class="drv-step active" id="drv-step-clientid">
         <div class="drv-step-num">Stap 2 — Client ID invullen</div>
         <div class="drv-step-txt">Plak je Client ID hier:</div>
         <div class="drv-field">
@@ -1408,6 +1408,7 @@ select option{background:#1e293b;}
 // ─── CONFIG ───────────────────────────────────────────────────────────
 const PIN = '1234'; // Wijzig hier de PIN
 const SK = 'pys_vgm_v5';
+const DRIVE_CLIENT_ID = '165524197572-90d7bht5h29pshr6c6dp3ovi2ajk6emu.apps.googleusercontent.com';
 
 // ─── CHECKLIST DATA ───────────────────────────────────────────────────
 const SECTIONS = [
@@ -1947,11 +1948,15 @@ function initApp(){
     updateDriveBtnState();
     updateSyncBadge();
     startAutoSync();
-    // Auto-reconnect if we have a client ID but no valid token
-    if(driveClientId && !driveIsConnected()){
-      setTimeout(function(){ driveConnect(true); }, 2000);
-    } else if(driveIsConnected()){
-      setTimeout(function(){ driveSync(true); }, 3000);
+    // Auto-reconnect: use hardcoded ID first, then localStorage
+    var autoId = DRIVE_CLIENT_ID || driveClientId;
+    if(autoId){
+      driveClientId = autoId;
+      if(!driveIsConnected()){
+        setTimeout(function(){ driveConnect(true); }, 2000);
+      } else {
+        setTimeout(function(){ driveSync(true); }, 3000);
+      }
     }
   }).catch(function(e){
     console.error('IndexedDB error:', e);
@@ -3027,7 +3032,7 @@ var conflictResolve= null;   // promise resolver
 // ── PERSISTENCE ────────────────────────────────────────────────
 function driveLoadConfig(){
   try{
-    driveClientId = localStorage.getItem('pys_drive_client_id') || '';
+    driveClientId = DRIVE_CLIENT_ID || localStorage.getItem('pys_drive_client_id') || '';
     driveToken    = JSON.parse(localStorage.getItem('pys_drive_token') || 'null');
     driveFolderId = localStorage.getItem('pys_drive_folder_id') || null;
   } catch(e){}
@@ -3067,6 +3072,7 @@ function openDriveModal(){
     conn.style.display  = 'block';
     connBtn.style.display = '';
     connBtn.textContent = 'Opnieuw verbinden';
+    connBtn.onclick = function(){ driveClientId = DRIVE_CLIENT_ID||driveClientId; driveConnect(false); closeDriveModal(); };
     var accTxt3 = document.getElementById('drv-account-txt');
     var lastTxt3 = document.getElementById('drv-last-sync-txt');
     if(accTxt3) accTxt3.textContent = 'Token verlopen — klik hieronder om opnieuw te verbinden';
@@ -3077,7 +3083,13 @@ function openDriveModal(){
     setup.style.display = 'block';
     conn.style.display  = 'none';
     connBtn.style.display = '';
-    if(driveClientId) document.getElementById('drv-client-id').value = driveClientId;
+    var knownId = DRIVE_CLIENT_ID || driveClientId;
+    // Hide client ID input step if ID already known
+    var stepEl = document.getElementById('drv-step-clientid');
+    if(stepEl) stepEl.style.display = knownId ? 'none' : 'block';
+    if(!knownId && document.getElementById('drv-client-id'))
+      document.getElementById('drv-client-id').value = '';
+    if(knownId) connBtn.textContent = 'Verbinden met Google';
   }
   modal.classList.add('open');
 }
@@ -3100,8 +3112,10 @@ function driveIsConnected(){
 
 // ── CONNECT via Google Identity Services ──────────────────────
 function driveConnect(silent){
-  var inputId = document.getElementById('drv-client-id') ?
-    document.getElementById('drv-client-id').value.trim() : driveClientId;
+  // Priority: hardcoded > localStorage > input field
+  var inputId = DRIVE_CLIENT_ID
+    || driveClientId
+    || (document.getElementById('drv-client-id') ? document.getElementById('drv-client-id').value.trim() : '');
   if(!inputId){ showToast('Voer eerst je Client ID in',''); return; }
   driveClientId = inputId;
   driveSaveConfig();
@@ -3188,8 +3202,9 @@ function driveRequest(method, url, body, contentType){
       // Try silent token refresh first
       driveToken = null;
       driveSaveConfig();
-      if(driveClientId){
-        // schedule silent reconnect
+      var reconnectId = DRIVE_CLIENT_ID || driveClientId;
+      if(reconnectId){
+        driveClientId = reconnectId;
         setTimeout(function(){ driveConnect(true); }, 500);
       }
       updateDriveBtnState();
