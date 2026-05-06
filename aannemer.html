@@ -204,6 +204,58 @@ select option{background:#1e293b;}
     </div>
   </div>
 
+
+  <div class="section">
+    <div class="section-title">1. Gegevens van uw onderneming</div>
+    <div class="fields-grid">
+      <div class="field full"><label class="field-required">Naam onderneming</label><input type="text" id="f-naam" placeholder="Bedrijfsnaam..."></div>
+      <div class="field"><label>BTW / Ondernemingsnr.</label><input type="text" id="f-btw" placeholder="BE0..."></div>
+      <div class="field"><label>VCA-certificering</label>
+        <select id="f-vca">
+          <option value="">-- Selecteer --</option>
+          <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>VOL-VCA</option><option>Geen</option>
+        </select>
+      </div>
+      <div class="field full"><label class="field-required">Adres onderneming</label><input type="text" id="f-adres" placeholder="Straat + nr, postcode + gemeente"></div>
+      <div class="field"><label>Telefoon / GSM</label><input type="tel" id="f-tel" placeholder="+32..."></div>
+      <div class="field"><label class="field-required">E-mailadres</label><input type="email" id="f-email" placeholder="info@..."></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">2. Werfverantwoordelijke</div>
+    <div class="fields-grid">
+      <div class="field"><label class="field-required">Naam + voornaam</label><input type="text" id="f-vw-naam" placeholder="Naam..."></div>
+      <div class="field"><label>Functie</label><input type="text" id="f-vw-func" placeholder="Ploegbaas..."></div>
+      <div class="field"><label>GSM op werf</label><input type="tel" id="f-vw-gsm" placeholder="+32..."></div>
+      <div class="field"><label>VOL-VCA attest aanwezig?</label>
+        <select id="f-vw-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
+      </div>
+      <div class="field"><label>Aantal personen op werf</label><input type="number" id="f-personen" min="1" placeholder="bijv. 3"></div>
+      <div class="field"><label>Iedereen Basis-VCA?</label>
+        <select id="f-basis-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ STEP 2: RI&E ═══════════ -->
+<div class="step-panel" id="step-2">
+  <div class="section" style="border-left-color:#3b82f6;">
+    <div class="section-title" style="color:#60a5fa;">3. Risicoanalyse (RI&E)</div>
+    <div class="section-sub">Activeer de gevaren die op deze werf van toepassing zijn voor jouw activiteiten. Pas eventueel de scores aan en vink maatregelen aan die je toepast.<br><br><b style="color:#fb923c;">Tip:</b> Kinney-methode &mdash; R = W (kans) x B (blootstelling) x E (ernst)</div>
+  </div>
+  <div id="rie-container"></div>
+  <button class="add-eigen-btn" onclick="openAddModal()">+ Eigen gevaar toevoegen</button>
+</div>
+
+<!-- ═══════════ STEP 3: INTENTIEVERKLARING ═══════════ -->
+<div class="step-panel" id="step-3">
+  <div class="section">
+    <div class="section-title">4. Intentieverklaring &mdash; voor akkoord</div>
+    <div class="section-sub">Lees onderstaande verklaring zorgvuldig. Door het ondertekenen verklaar je dat je akkoord gaat met de inhoud.</div>
+  </div>
+
   <!-- VGM INFO BLOCK (uitklapbaar) -->
   <div class="vgm-info-card" id="vgm-info-card">
     <div class="vgm-info-hdr" onclick="toggleVgmInfo()">
@@ -269,57 +321,6 @@ select option{background:#1e293b;}
       </div>
 
     </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">1. Gegevens van uw onderneming</div>
-    <div class="fields-grid">
-      <div class="field full"><label class="field-required">Naam onderneming</label><input type="text" id="f-naam" placeholder="Bedrijfsnaam..."></div>
-      <div class="field"><label>BTW / Ondernemingsnr.</label><input type="text" id="f-btw" placeholder="BE0..."></div>
-      <div class="field"><label>VCA-certificering</label>
-        <select id="f-vca">
-          <option value="">-- Selecteer --</option>
-          <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>VOL-VCA</option><option>Geen</option>
-        </select>
-      </div>
-      <div class="field full"><label class="field-required">Adres onderneming</label><input type="text" id="f-adres" placeholder="Straat + nr, postcode + gemeente"></div>
-      <div class="field"><label>Telefoon / GSM</label><input type="tel" id="f-tel" placeholder="+32..."></div>
-      <div class="field"><label class="field-required">E-mailadres</label><input type="email" id="f-email" placeholder="info@..."></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">2. Werfverantwoordelijke</div>
-    <div class="fields-grid">
-      <div class="field"><label class="field-required">Naam + voornaam</label><input type="text" id="f-vw-naam" placeholder="Naam..."></div>
-      <div class="field"><label>Functie</label><input type="text" id="f-vw-func" placeholder="Ploegbaas..."></div>
-      <div class="field"><label>GSM op werf</label><input type="tel" id="f-vw-gsm" placeholder="+32..."></div>
-      <div class="field"><label>VOL-VCA attest aanwezig?</label>
-        <select id="f-vw-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
-      </div>
-      <div class="field"><label>Aantal personen op werf</label><input type="number" id="f-personen" min="1" placeholder="bijv. 3"></div>
-      <div class="field"><label>Iedereen Basis-VCA?</label>
-        <select id="f-basis-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════════ STEP 2: RI&E ═══════════ -->
-<div class="step-panel" id="step-2">
-  <div class="section" style="border-left-color:#3b82f6;">
-    <div class="section-title" style="color:#60a5fa;">3. Risicoanalyse (RI&E)</div>
-    <div class="section-sub">Activeer de gevaren die op deze werf van toepassing zijn voor jouw activiteiten. Pas eventueel de scores aan en vink maatregelen aan die je toepast.<br><br><b style="color:#fb923c;">Tip:</b> Kinney-methode &mdash; R = W (kans) x B (blootstelling) x E (ernst)</div>
-  </div>
-  <div id="rie-container"></div>
-  <button class="add-eigen-btn" onclick="openAddModal()">+ Eigen gevaar toevoegen</button>
-</div>
-
-<!-- ═══════════ STEP 3: INTENTIEVERKLARING ═══════════ -->
-<div class="step-panel" id="step-3">
-  <div class="section">
-    <div class="section-title">4. Intentieverklaring &mdash; voor akkoord</div>
-    <div class="section-sub">Lees onderstaande verklaring zorgvuldig. Door het ondertekenen verklaar je dat je akkoord gaat met de inhoud.</div>
   </div>
 
   <div class="iv-verklaring">
