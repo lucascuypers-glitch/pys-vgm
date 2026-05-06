@@ -7,6 +7,7 @@
 <title>PowerYourself — VGM App</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 
@@ -556,6 +557,202 @@ select option{background:#1e293b;}
 .bij-sync-dot.pending{background:#eab308;}
 .bij-sync-dot.synced{background:#22c55e;}
 .bij-sync-dot.error{background:#ef4444;}
+
+/* ── RAPPORTEN IN BIJLAGEN ── */
+.bij-cat-rapport{background:rgba(168,85,247,.15);color:#c4b5fd;}
+.bij-cat-docx{background:rgba(59,130,246,.15);color:#93c5fd;}
+.bij-drive-link{display:inline-flex;align-items:center;gap:.25rem;margin-top:.3rem;
+  font-size:.68rem;color:#4ade80;text-decoration:none;}
+.bij-drive-link:hover{text-decoration:underline;}
+
+/* ═══ NIEUWE LAYOUT v2 ═══ */
+
+/* PROGRESS section — prominent bovenaan in werf */
+.prog-section{background:#112244;padding:12px 14px;border-bottom:1px solid #1a3560;}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:6px;}
+.prog-lbl-txt{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;color:#94a3b8;}
+.prog-lbl-pct{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:800;color:#f97316;}
+.prog-bar-big{background:#334155;border-radius:6px;height:10px;overflow:hidden;margin-bottom:8px;}
+.prog-fill-big{background:linear-gradient(90deg,#ea580c,#f97316);height:100%;border-radius:6px;transition:width .4s;}
+.prog-stats{display:flex;gap:0;}
+.ps{flex:1;text-align:center;border-right:1px solid #1a3560;}
+.ps:last-child{border-right:none;}
+.ps-n{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;line-height:1;}
+.ps-l{font-size:.6rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;margin-top:1px;}
+.ps.ok .ps-n{color:#22c55e;} .ps.nok .ps-n{color:#ef4444;}
+.ps.nvt .ps-n{color:#94a3b8;} .ps.op .ps-n{color:#eab308;}
+
+/* QUICK ACTION BAR */
+.quick-bar{display:flex;gap:8px;padding:10px 14px;background:#112244;border-bottom:1px solid #1a3560;}
+.qa-btn{flex:1;padding:9px 4px;border-radius:10px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .1s;}
+.qa-btn:active{transform:scale(.96);}
+.qa-icon{font-size:1.2rem;line-height:1;}
+.qa-btn.qa-camera{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid rgba(34,197,94,.3);}
+.qa-btn.qa-note{background:rgba(59,130,246,.12);color:#93c5fd;border:1.5px solid rgba(59,130,246,.3);}
+.qa-btn.qa-incident{background:rgba(239,68,68,.12);color:#f87171;border:1.5px solid rgba(239,68,68,.3);}
+.qa-btn.qa-more{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
+
+/* SECTIE ACCORDION */
+.sec-ac{margin:10px 14px 0;}
+.sec-ac-item{background:#1e293b;border-radius:12px;margin-bottom:8px;overflow:hidden;border:1.5px solid #1a3560;transition:border-color .2s;}
+.sec-ac-item.nok{border-color:rgba(239,68,68,.45);}
+.sec-ac-item.done{border-color:rgba(34,197,94,.3);}
+.sec-ac-hdr{padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.sec-ac-icon-w{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;}
+.sec-ac-icon-w.orange{background:rgba(249,115,22,.15);}
+.sec-ac-icon-w.red{background:rgba(239,68,68,.15);}
+.sec-ac-icon-w.green{background:rgba(34,197,94,.15);}
+.sec-ac-icon-w.blue{background:rgba(59,130,246,.15);}
+.sec-ac-icon-w.yellow{background:rgba(234,179,8,.15);}
+.sec-ac-icon-w.mist{background:rgba(148,163,184,.1);}
+.sec-ac-info{flex:1;min-width:0;}
+.sec-ac-title{font-family:'Barlow Condensed',sans-serif;font-size:.94rem;font-weight:700;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sec-ac-sub{font-size:.66rem;color:#94a3b8;margin-top:1px;}
+.sec-ac-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.sec-badge-v2{font-family:'Barlow Condensed',sans-serif;font-size:.66rem;font-weight:700;padding:3px 7px;border-radius:20px;}
+.sb-done{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+.sb-nok{background:rgba(239,68,68,.18);color:#f87171;border:1px solid rgba(239,68,68,.4);}
+.sb-open{background:rgba(148,163,184,.12);color:#94a3b8;border:1px solid rgba(148,163,184,.25);}
+.sb-mix{background:rgba(234,179,8,.15);color:#fde047;border:1px solid rgba(234,179,8,.3);}
+.chev-v2{color:#94a3b8;font-size:.85rem;transition:transform .2s;}
+.sec-ac-item.open .chev-v2{transform:rotate(90deg);}
+.sec-ac-content{padding:0 13px 12px;display:none;}
+.sec-ac-item.open .sec-ac-content{display:block;}
+
+/* CHK ITEM in accordion */
+.chk-item-v2{padding:10px 0;border-bottom:1px solid #1a3560;}
+.chk-item-v2:last-child{border-bottom:none;}
+.chk-q-v2{font-size:.86rem;color:#f1f5f9;line-height:1.35;margin-bottom:7px;display:flex;align-items:flex-start;gap:6px;}
+.risk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.rd-hoog{background:#ef4444;}
+.rd-mid{background:#eab308;}
+.rd-laag{background:#22c55e;}
+.ans-row-v2{display:flex;gap:6px;}
+.ans-btn-v2{flex:1;padding:9px 4px;border-radius:8px;border:1.5px solid transparent;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;}
+.ans-btn-v2.ja{background:rgba(34,197,94,.1);color:#4ade80;border-color:rgba(34,197,94,.3);}
+.ans-btn-v2.ja.active{background:#16a34a;color:#fff;border-color:#16a34a;}
+.ans-btn-v2.nee{background:rgba(239,68,68,.1);color:#f87171;border-color:rgba(239,68,68,.3);}
+.ans-btn-v2.nee.active{background:#dc2626;color:#fff;border-color:#dc2626;}
+.ans-btn-v2.nvt{background:rgba(148,163,184,.08);color:#94a3b8;border-color:rgba(148,163,184,.2);}
+.ans-btn-v2.nvt.active{background:#334155;color:#fff;border-color:#334155;}
+
+.note-row-v2{margin-top:6px;background:#112244;border-radius:8px;padding:7px 10px;font-size:.78rem;color:#94a3b8;display:flex;align-items:flex-start;gap:6px;cursor:pointer;}
+.note-row-v2 span{color:#f97316;flex-shrink:0;}
+.note-row-v2 i{font-style:normal;color:#cbd5e1;}
+
+.foto-row-v2{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;align-items:center;}
+.foto-thumb-v2{width:46px;height:46px;border-radius:8px;border:1.5px solid #f97316;overflow:hidden;cursor:pointer;}
+.foto-thumb-v2 img{width:100%;height:100%;object-fit:cover;display:block;}
+.foto-add-v2{width:46px;height:46px;border-radius:8px;border:1.5px dashed #f97316;background:rgba(249,115,22,.06);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#f97316;cursor:pointer;line-height:1;}
+
+/* DETAIL ROW expand into apart screen */
+.expand-btn{margin-top:6px;width:100%;padding:6px;background:rgba(148,163,184,.08);border:1px solid rgba(148,163,184,.15);border-radius:7px;color:#64748b;font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;}
+
+/* AFRONDEN BIG BTN */
+.afronden-wrap{padding:12px 14px;background:#0a1628;}
+.afronden-btn{width:100%;padding:14px;background:linear-gradient(90deg,#ea580c,#f97316);border:none;border-radius:14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;box-shadow:0 4px 16px rgba(249,115,22,.35);display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+
+/* BOTTOM NAVIGATION */
+.bnav{background:#112244;border-top:1px solid #1a3560;padding:6px 0 calc(2px + env(safe-area-inset-bottom));display:flex;position:fixed;bottom:0;left:0;right:0;z-index:100;}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;cursor:pointer;background:none;border:none;}
+.bnav-icon{font-size:1.2rem;line-height:1;opacity:.55;}
+.bnav-label{font-family:'Barlow Condensed',sans-serif;font-size:.62rem;font-weight:700;color:#94a3b8;}
+.bnav-item.active .bnav-icon{opacity:1;}
+.bnav-item.active .bnav-label{color:#f97316;}
+.bnav-badge{position:relative;display:inline-block;line-height:1;}
+.bnav-dot{position:absolute;top:-2px;right:-5px;width:8px;height:8px;border-radius:50%;background:#ef4444;border:1.5px solid #112244;}
+
+/* MORE MENU (sheet) */
+#more-sheet{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);display:none;align-items:flex-end;}
+#more-sheet.open{display:flex;}
+.more-body{background:#112244;border-radius:16px 16px 0 0;width:100%;padding:16px 14px calc(16px + env(safe-area-inset-bottom));max-height:80vh;overflow-y:auto;}
+.more-title{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;text-align:center;}
+.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.more-tile{background:#1e293b;border:1.5px solid #1a3560;border-radius:12px;padding:13px 10px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;color:#f1f5f9;}
+.more-tile-icon{font-size:1.6rem;}
+.more-tile-lbl{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;text-align:center;}
+.more-tile-sub{font-size:.62rem;color:#94a3b8;text-align:center;}
+
+/* RAPPORT SCREEN */
+.rapport-header{background:linear-gradient(135deg,#112244,#1a3560);padding:14px;border-bottom:2px solid #f97316;}
+.rapport-title{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:#f1f5f9;margin-bottom:2px;}
+.rapport-sub-v2{font-size:.75rem;color:#94a3b8;}
+.rapport-score{margin:14px;background:#1e293b;border-radius:14px;padding:14px;border:1.5px solid #1a3560;}
+.score-big{text-align:center;margin-bottom:10px;}
+.score-pct{font-family:'Barlow Condensed',sans-serif;font-size:3rem;font-weight:800;line-height:1;}
+.score-pct.green{color:#22c55e;} .score-pct.yellow{color:#eab308;} .score-pct.red{color:#ef4444;}
+.score-lbl{font-size:.8rem;color:#94a3b8;}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid #1a3560;padding-top:10px;}
+.sg{text-align:center;}
+.sg-n{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;}
+.sg-l{font-size:.6rem;color:#94a3b8;text-transform:uppercase;}
+.rapport-nok{margin:0 14px 10px;background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.3);border-radius:12px;padding:10px 14px;}
+.rapport-nok-title{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;color:#f87171;margin-bottom:6px;}
+.nok-item{font-size:.78rem;color:#cbd5e1;padding:5px 0;border-bottom:1px solid rgba(239,68,68,.12);display:flex;align-items:flex-start;gap:6px;line-height:1.35;}
+.nok-item:last-child{border-bottom:none;}
+.nok-dot{width:6px;height:6px;border-radius:50%;background:#ef4444;flex-shrink:0;margin-top:5px;}
+.export-btns-v2{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px;}
+.exp-btn-v2{padding:13px;border-radius:12px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.exp-pdf-v2{background:linear-gradient(90deg,#ea580c,#f97316);color:#fff;box-shadow:0 4px 16px rgba(249,115,22,.3);}
+.exp-docx-v2{background:rgba(59,130,246,.15);color:#93c5fd;border:1.5px solid rgba(59,130,246,.4);}
+.exp-mail-v2{background:rgba(34,197,94,.12);color:#4ade80;border:1.5px solid rgba(34,197,94,.3);}
+.exp-back-v2{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
+.rapport-info{margin:0 14px 12px;padding:9px 12px;background:rgba(234,179,8,.08);border:1px solid rgba(234,179,8,.3);border-radius:10px;font-size:.74rem;color:#fde047;line-height:1.4;}
+
+/* DEEL LINK MODAL */
+#deel-modal{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.88);display:none;align-items:flex-end;}
+#deel-modal.open{display:flex;}
+.deel-body{background:#112244;border-radius:16px 16px 0 0;padding:18px 14px calc(18px + env(safe-area-inset-bottom));width:100%;max-height:85vh;overflow-y:auto;}
+.deel-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;color:#f97316;margin-bottom:6px;}
+.deel-sub{font-size:.78rem;color:#94a3b8;line-height:1.4;margin-bottom:12px;}
+.deel-field{margin-bottom:10px;}
+.deel-field label{font-size:.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;}
+.deel-input{width:100%;background:#1e293b;border:1.5px solid #334155;border-radius:9px;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.88rem;padding:9px 12px;outline:none;}
+.deel-input:focus{border-color:#f97316;}
+.deel-cb{display:flex;gap:8px;margin-bottom:10px;}
+.deel-cb-item{flex:1;background:#1e293b;border:1.5px solid #334155;border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
+.deel-cb-item.sel{background:rgba(249,115,22,.12);border-color:#f97316;}
+.deel-cb-item .cbi-icon{font-size:1.3rem;}
+.deel-cb-item .cbi-lbl{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;color:#f1f5f9;}
+.deel-cb-item.sel .cbi-lbl{color:#f97316;}
+.deel-link-out{background:#0a1628;border:1px dashed #334155;border-radius:8px;padding:9px 11px;font-family:monospace;font-size:.7rem;color:#fbbf24;word-break:break-all;margin-bottom:8px;}
+.deel-actions{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+.deel-btn-primary{padding:13px;background:linear-gradient(90deg,#ea580c,#f97316);color:#fff;border:none;border-radius:11px;font-family:'Barlow Condensed',sans-serif;font-size:.98rem;font-weight:800;cursor:pointer;}
+.deel-btn-sec{padding:11px;background:rgba(59,130,246,.12);color:#93c5fd;border:1.5px solid rgba(59,130,246,.3);border-radius:11px;font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;}
+.deel-btn-cancel{padding:11px;background:#1e293b;color:#94a3b8;border:1.5px solid #334155;border-radius:11px;font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;}
+
+/* INKOMENDE BIJLAGEN tab — voor antwoorden van aannemers */
+.inbox-card{margin:0 14px 8px;background:rgba(34,197,94,.06);border:1.5px solid rgba(34,197,94,.3);border-radius:11px;padding:11px 13px;display:flex;align-items:center;gap:10px;}
+.inbox-icon{width:36px;height:36px;border-radius:9px;background:rgba(34,197,94,.15);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.inbox-info{flex:1;min-width:0;}
+.inbox-name{font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;color:#f1f5f9;}
+.inbox-meta{font-size:.7rem;color:#94a3b8;margin-top:1px;}
+
+/* SEARCH BAR dashboard */
+.search-bar-v2{margin:0 14px 12px;background:#1e293b;border:1.5px solid #334155;border-radius:10px;padding:9px 14px;display:flex;align-items:center;gap:8px;}
+.search-bar-v2 input{flex:1;background:none;border:none;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.88rem;outline:none;}
+.search-bar-v2 input::placeholder{color:#64748b;}
+
+/* HIDE OLD TAB BAR */
+.tab-bar.legacy-hide{display:none;}
+
+/* SHARE AANNEMER MODAL */
+#share-aannemer-modal{position:fixed;inset:0;z-index:850;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:14px;}
+#share-aannemer-modal.open{display:flex;}
+.sa-body{background:#112244;border-radius:16px;padding:18px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;}
+.sa-title{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:#c4b5fd;margin-bottom:6px;}
+.sa-sub{font-size:.78rem;color:#94a3b8;line-height:1.5;margin-bottom:14px;}
+.sa-field{margin-bottom:10px;}
+.sa-field label{font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:5px;}
+.sa-input{width:100%;background:#1e293b;border:1.5px solid #334155;border-radius:8px;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.88rem;padding:10px 12px;outline:none;}
+.sa-input:focus{border-color:#a855f7;}
+.sa-link-box{background:#0a1628;border:1.5px solid #1a3560;border-radius:8px;padding:10px 12px;font-family:'Courier New',monospace;font-size:.7rem;color:#fbbf24;word-break:break-all;line-height:1.4;max-height:80px;overflow-y:auto;margin-top:6px;}
+.sa-btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.sa-btn{flex:1;padding:11px;border-radius:10px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;min-width:100px;}
+.sa-btn-mail{background:linear-gradient(90deg,#a855f7,#c4b5fd);color:#fff;}
+.sa-btn-copy{background:rgba(59,130,246,.15);color:#93c5fd;border:1.5px solid rgba(59,130,246,.4);}
+.sa-btn-cancel{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
+
 </style>
 </head>
 <body>
@@ -741,7 +938,7 @@ select option{background:#1e293b;}
   </div>
 
   <div class="auto-sync-bar" id="auto-sync-bar"><span class="auto-sync-dot" id="auto-sync-dot"></span><span class="auto-sync-txt" id="auto-sync-txt">Offline — wijzigingen opgeslagen lokaal</span></div>
-  <div class="tab-bar">
+  <div class="tab-bar legacy-hide">
     <button class="tab-btn active" onclick="switchTab('rondgang',this)">Rondgang</button>
     <button class="tab-btn" onclick="switchTab('rie',this)">RI&amp;E</button>
     <button class="tab-btn" onclick="switchTab('opmerkingen',this)">Notities</button>
@@ -753,35 +950,101 @@ select option{background:#1e293b;}
     <button class="tab-btn" onclick="switchTab('noodkaart',this)">Noodkaart</button>
   </div>
 
+  <!-- BOTTOM NAVIGATION v2 -->
+  <nav class="bnav" id="bnav-v2">
+    <button class="bnav-item active" id="bnav-rondgang" onclick="navTo('rondgang')">
+      <span class="bnav-icon">&#10003;</span>
+      <span class="bnav-label">Rondgang</span>
+    </button>
+    <button class="bnav-item" id="bnav-rie" onclick="navTo('rie')">
+      <span class="bnav-icon">&#9888;</span>
+      <span class="bnav-label">RI&amp;E</span>
+    </button>
+    <button class="bnav-item" id="bnav-opmerkingen" onclick="navTo('opmerkingen')">
+      <span class="bnav-icon">&#128221;</span>
+      <span class="bnav-label">Notities</span>
+    </button>
+    <button class="bnav-item" id="bnav-bijlagen" onclick="navTo('bijlagen')">
+      <span class="bnav-icon">&#128193;</span>
+      <span class="bnav-label">Bijlagen</span>
+    </button>
+    <button class="bnav-item" id="bnav-meer" onclick="openMoreSheet()">
+      <span class="bnav-badge"><span class="bnav-icon">&#8943;</span></span>
+      <span class="bnav-label">Meer</span>
+    </button>
+  </nav>
+
 <!-- ═══ TAB 1: RONDGANG ═══ -->
   <div class="tab-panel active" id="tab-rondgang">
-    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-    <div class="meta-sec">
-      <div class="meta-lbl">Rondgangsgegevens</div>
-      <div class="meta-grid">
-        <div class="mf"><label>Werf / Locatie</label><input type="text" id="meta-werf" placeholder="Werfadres..." oninput="autoSave()"></div>
-        <div class="mf"><label>Datum</label><input type="date" id="meta-datum" oninput="autoSave()"></div>
-        <div class="mf"><label>Inspecteur</label><input type="text" id="meta-naam" placeholder="Naam..." oninput="autoSave()"></div>
-        <div class="mf"><label>Tijdstip</label><input type="time" id="meta-tijd" oninput="autoSave()"></div>
-        <div class="mf full"><label>Klant / Opdrachtgever</label><input type="text" id="meta-klant" placeholder="Naam klant..." oninput="autoSave()"></div>
+    <!-- Progress prominent -->
+    <div class="prog-section">
+      <div class="prog-label">
+        <span class="prog-lbl-txt">Voortgang rondgang</span>
+        <span class="prog-lbl-pct" id="prog-pct">0%</span>
+      </div>
+      <div class="prog-bar-big"><div class="prog-fill-big" id="prog-fill-v2" style="width:0%;"></div></div>
+      <div class="prog-stats">
+        <div class="ps ok"><div class="ps-n" id="stat-ja">0</div><div class="ps-l">OK</div></div>
+        <div class="ps nok"><div class="ps-n" id="stat-nee">0</div><div class="ps-l">NOK</div></div>
+        <div class="ps nvt"><div class="ps-n" id="stat-nvt">0</div><div class="ps-l">N/A</div></div>
+        <div class="ps op"><div class="ps-n" id="stat-open">0</div><div class="ps-l">Open</div></div>
       </div>
     </div>
-    <div class="stats-bar">
-      <div class="stat-c s-ok"><div class="stat-n" id="stat-ja">0</div><div class="stat-l">OK</div></div>
-      <div class="stat-c s-nok"><div class="stat-n" id="stat-nee">0</div><div class="stat-l">NOK</div></div>
-      <div class="stat-c s-nvt"><div class="stat-n" id="stat-nvt">0</div><div class="stat-l">N/A</div></div>
-      <div class="stat-c s-op"><div class="stat-n" id="stat-open">0</div><div class="stat-l">Open</div></div>
+
+    <!-- Quick action bar -->
+    <div class="quick-bar">
+      <button class="qa-btn qa-camera" onclick="quickPhoto()">
+        <span class="qa-icon">&#128247;</span>
+        <span>Foto</span>
+      </button>
+      <button class="qa-btn qa-note" onclick="quickNote()">
+        <span class="qa-icon">&#128221;</span>
+        <span>Notitie</span>
+      </button>
+      <button class="qa-btn qa-incident" onclick="navTo('incident')">
+        <span class="qa-icon">&#9888;</span>
+        <span>Incident</span>
+      </button>
+      <button class="qa-btn qa-more" onclick="openMoreSheet()">
+        <span class="qa-icon">&#8943;</span>
+        <span>Meer</span>
+      </button>
     </div>
-    <div class="nood-card">
-      <div class="nood-title">NOODINSTRUCTIE</div>
-      <div class="nood-ln">Bij ongeval of brand: bel <span class="nood-num">112</span></div>
-      <div class="nood-ln"><strong>Lucas Cuypers</strong> &mdash; +32 476 86 41 38</div>
-      <div class="nood-ln" style="font-size:.73rem;">WIE &middot; WAAR &middot; WAT er is gebeurd &middot; HOEVEEL slachtoffers</div>
+
+    <!-- Werfgegevens compact -->
+    <details style="background:#112244;border-bottom:1px solid #1a3560;padding:0;">
+      <summary style="padding:.55rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;color:#94a3b8;cursor:pointer;text-transform:uppercase;letter-spacing:.06em;">Werfgegevens (klik voor details)</summary>
+      <div style="padding:.6rem 1rem .9rem;">
+        <div class="meta-grid">
+          <div class="mf"><label>Werf / Locatie</label><input type="text" id="meta-werf" placeholder="Werfadres..." oninput="autoSave()"></div>
+          <div class="mf"><label>Datum</label><input type="date" id="meta-datum" oninput="autoSave()"></div>
+          <div class="mf"><label>Inspecteur</label><input type="text" id="meta-naam" placeholder="Naam..." oninput="autoSave()"></div>
+          <div class="mf"><label>Tijdstip</label><input type="time" id="meta-tijd" oninput="autoSave()"></div>
+          <div class="mf full"><label>Klant / Opdrachtgever</label><input type="text" id="meta-klant" placeholder="Naam klant..." oninput="autoSave()"></div>
+        </div>
+      </div>
+    </details>
+
+    <!-- Nood banner compact -->
+    <div style="margin:10px 14px;background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(239,68,68,.04));border:1.5px solid rgba(239,68,68,.4);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:800;color:#f87171;line-height:1;">112</div>
+      <div style="flex:1;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;color:#fca5a5;">Noodinstructie</div>
+        <div style="font-size:.7rem;color:#94a3b8;">Lucas Cuypers &middot; +32 476 86 41 38</div>
+      </div>
     </div>
-    <div id="checklist-container"></div>
+
+    <!-- Sectie accordion -->
+    <div class="sec-ac" id="checklist-container"></div>
+
+    <!-- Afronden BIG button -->
+    <div class="afronden-wrap">
+      <button class="afronden-btn" onclick="openAfronden()">Rondgang afronden &amp; Rapport &rarr;</button>
+    </div>
+
+    <div style="height:80px;"></div>
   </div>
 
-  <!-- ═══ TAB 2: RI&E ═══ -->
   <div class="tab-panel" id="tab-rie">
     <div class="rie-header">
       <div class="rie-intro">Zet de schakelaar <strong>AAN</strong> voor gevaren die van toepassing zijn op deze werf. Pas de Kinney-scores aan (W x B x E = R) en vink de maatregelen aan.</div>
@@ -916,6 +1179,7 @@ select option{background:#1e293b;}
     <!-- Export knoppen -->
     <div class="iv-export-btns">
       <button class="iv-btn iv-btn-pdf" onclick="generateIVPdf()">PDF Genereren &amp; Opslaan</button>
+      <button class="iv-btn" style="background:rgba(168,85,247,.15);border:1.5px solid rgba(168,85,247,.4);color:#c4b5fd;" onclick="openShareAannemer()">Stuur deel-link naar aannemer</button>
       <button class="iv-btn iv-btn-mail" onclick="sendIVMail()">Versturen per E-mail (mailto)</button>
       <button class="iv-btn iv-btn-reset" onclick="resetIV()">Intentieverklaring wissen</button>
     </div>
@@ -1348,6 +1612,7 @@ select option{background:#1e293b;}
       <button class="bij-filter-btn" onclick="setBijFilter('document',this)">Documenten</button>
       <button class="bij-filter-btn" onclick="setBijFilter('attest',this)">Attesten</button>
       <button class="bij-filter-btn" onclick="setBijFilter('plan',this)">Plannen</button>
+      <button class="bij-filter-btn" onclick="setBijFilter('rapport',this)">Rapporten</button>
     </div>
     <div class="bij-count" id="bij-count"></div>
     <div class="bij-grid" id="bij-grid"></div>
@@ -1391,9 +1656,134 @@ select option{background:#1e293b;}
     </div>
   </div>
 
+
+<!-- MORE SHEET -->
+<div id="more-sheet">
+  <div class="more-body">
+    <div class="more-title">Meer opties</div>
+    <div class="more-grid">
+      <button class="more-tile" onclick="closeMore();navTo('intentie')">
+        <span class="more-tile-icon">&#9997;</span>
+        <span class="more-tile-lbl">Intentieverklaring</span>
+        <span class="more-tile-sub">Aannemer</span>
+      </button>
+      <button class="more-tile" onclick="closeMore();navTo('keuringen')">
+        <span class="more-tile-icon">&#10004;</span>
+        <span class="more-tile-lbl">Keuringen</span>
+        <span class="more-tile-sub">Aanwezig?</span>
+      </button>
+      <button class="more-tile" onclick="closeMore();navTo('incident')">
+        <span class="more-tile-icon">&#9888;</span>
+        <span class="more-tile-lbl">Incident</span>
+        <span class="more-tile-sub">Onderzoek</span>
+      </button>
+      <button class="more-tile" onclick="closeMore();navTo('vgminfo')">
+        <span class="more-tile-icon">&#128218;</span>
+        <span class="more-tile-lbl">VGM Info</span>
+        <span class="more-tile-sub">Handboek</span>
+      </button>
+      <button class="more-tile" onclick="closeMore();navTo('noodkaart')">
+        <span class="more-tile-icon">&#128680;</span>
+        <span class="more-tile-lbl">Noodkaart</span>
+        <span class="more-tile-sub">Bel 112</span>
+      </button>
+      <button class="more-tile" onclick="closeMore();openDeelModal()">
+        <span class="more-tile-icon">&#128279;</span>
+        <span class="more-tile-lbl">Deel met aannemer</span>
+        <span class="more-tile-sub">Stuur link</span>
+      </button>
+    </div>
+    <button class="deel-btn-cancel" style="margin-top:14px;width:100%;" onclick="closeMore()">Sluiten</button>
+  </div>
+</div>
+
+<!-- DEEL LINK MODAL (voor aannemer) -->
+<div id="deel-modal">
+  <div class="deel-body">
+    <div class="deel-title">Stuur naar aannemer</div>
+    <div class="deel-sub">De aannemer ontvangt een link waarmee hij zelf zijn RI&amp;E en intentieverklaring kan invullen en ondertekenen. Het ingevulde document komt direct in jullie Drive map "Inbox aannemers".</div>
+
+    <div class="deel-field">
+      <label>Wat moet de aannemer invullen?</label>
+      <div class="deel-cb">
+        <div class="deel-cb-item sel" id="dcb-rie" onclick="toggleDeelType('rie')">
+          <span class="cbi-icon">&#9888;</span>
+          <span class="cbi-lbl">RI&amp;E</span>
+        </div>
+        <div class="deel-cb-item sel" id="dcb-intentie" onclick="toggleDeelType('intentie')">
+          <span class="cbi-icon">&#9997;</span>
+          <span class="cbi-lbl">Intentie</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="deel-field">
+      <label>Naam aannemer / bedrijf</label>
+      <input type="text" class="deel-input" id="deel-aannemer-naam" placeholder="bijv. Janssens Dakwerken">
+    </div>
+    <div class="deel-field">
+      <label>E-mail aannemer</label>
+      <input type="email" class="deel-input" id="deel-aannemer-mail" placeholder="aannemer@bedrijf.be">
+    </div>
+
+    <div class="deel-field" id="deel-link-wrap" style="display:none;">
+      <label>Link voor aannemer</label>
+      <div class="deel-link-out" id="deel-link-out"></div>
+    </div>
+
+    <div class="deel-actions">
+      <button class="deel-btn-primary" onclick="genereerDeelLink()">Link aanmaken</button>
+      <button class="deel-btn-sec" id="deel-mail-btn" onclick="versturenViaMail()" style="display:none;">Versturen via e-mail</button>
+      <button class="deel-btn-sec" id="deel-copy-btn" onclick="kopieerLink()" style="display:none;">Link kopi&euml;ren</button>
+      <button class="deel-btn-cancel" onclick="closeDeelModal()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
   <!-- BOTTOM BAR -->
-  <div class="btm-bar" id="btm-bar">
-    <button class="rpt-btn" onclick="generateReport()">Genereer Rapport PDF</button>
+
+  <!-- TAB AFRONDEN / RAPPORT -->
+  <div class="tab-panel" id="tab-afronden">
+    <div class="rapport-header">
+      <div class="rapport-title">Rondgang Afronden</div>
+      <div class="rapport-sub-v2" id="rapport-sub">Werf &middot; datum</div>
+    </div>
+
+    <div class="rapport-score">
+      <div class="score-big">
+        <div class="score-pct" id="score-pct">--%</div>
+        <div class="score-lbl">Veiligheidsscore</div>
+      </div>
+      <div class="score-grid">
+        <div class="sg"><div class="sg-n" style="color:#22c55e;" id="rscore-ja">0</div><div class="sg-l">OK</div></div>
+        <div class="sg"><div class="sg-n" style="color:#ef4444;" id="rscore-nee">0</div><div class="sg-l">NOK</div></div>
+        <div class="sg"><div class="sg-n" style="color:#94a3b8;" id="rscore-nvt">0</div><div class="sg-l">N/A</div></div>
+        <div class="sg"><div class="sg-n" style="color:#eab308;" id="rscore-open">0</div><div class="sg-l">Open</div></div>
+      </div>
+    </div>
+
+    <div class="rapport-nok" id="rapport-nok-block" style="display:none;">
+      <div class="rapport-nok-title" id="rapport-nok-title">Actiepunten</div>
+      <div id="rapport-nok-list"></div>
+    </div>
+
+    <div class="export-btns-v2">
+      <button class="exp-btn-v2 exp-pdf-v2" onclick="generateReport()">PDF opslaan &amp; naar Drive</button>
+      <button class="exp-btn-v2 exp-docx-v2" onclick="generateDocx()">DOCX opslaan &amp; naar Drive</button>
+      <button class="exp-btn-v2 exp-mail-v2" onclick="versturenRapportMail()">Versturen per mail (Drive link)</button>
+      <button class="exp-btn-v2 exp-back-v2" onclick="navTo('rondgang')">&larr; Terug naar rondgang</button>
+    </div>
+
+    <div class="rapport-info">
+      PDF en DOCX worden automatisch bewaard in Google Drive onder de werfmap. De mail bevat een directe Drive-link.
+    </div>
+
+    <div style="height:80px;"></div>
+  </div>
+
+  <div class="btm-bar" id="btm-bar" style="display:none;">
+    <button class="rpt-btn" onclick="generateReport()">Genereer Rapport</button>
+    <button class="rpt-btn" style="flex:0;padding:.78rem .7rem;font-size:.82rem;background:rgba(249,115,22,.15);border:1.5px solid rgba(249,115,22,.4);box-shadow:none;" onclick="generateDocx()">DOCX</button>
     <button class="rst-btn" onclick="resetWerf()">Wis werf</button>
   </div>
 </div>
@@ -2312,8 +2702,10 @@ function generateIVPdf(){
   }
 
   var fname='IV_PowerYourself_'+(iv('naam')||'aannemer').replace(/\s+/g,'_')+'_'+(iv('datum')||new Date().toISOString().split('T')[0])+'.pdf';
+  var ivBlob = doc.output('blob');
   doc.save(fname);
-  showToast('Intentieverklaring PDF opgeslagen','success');
+  showToast('Intentieverklaring opgeslagen! Uploaden naar Drive...','success');
+  uploadRapportToDrive(ivBlob, fname, 'application/pdf');
 }
 
 // ─── INTENTIEVERKLARING MAIL ───────────────────────────────────────────
@@ -2474,8 +2866,11 @@ function _doReport(){
   var tp=doc.internal.getNumberOfPages();
   for(var p=1;p<=tp;p++){ doc.setPage(p); doc.setFillColor(10,22,40); doc.rect(0,ph-8,pw,8,'F'); doc.setTextColor(70,90,120); doc.setFont('helvetica','normal'); doc.setFontSize(6.5); doc.text('PowerYourself (Arscensio bv) - VGM Rapport - Vertrouwelijk',mg,ph-3); doc.text(p+'/'+tp,pw-mg,ph-3,{align:'right'}); }
 
-  doc.save('PYS_VGM_'+(m.werf||'werf')+'_'+(m.datum||new Date().toISOString().split('T')[0])+'.pdf');
-  showToast('Rapport klaar!','success');
+  var fname='PYS_VGM_'+(m.werf||'werf').replace(/\s+/g,'_')+'_'+(m.datum||new Date().toISOString().split('T')[0])+'.pdf';
+  var pdfBlob = doc.output('blob');
+  doc.save(fname);
+  showToast('Rapport klaar! Uploaden naar Drive...','success');
+  uploadRapportToDrive(pdfBlob, fname, 'application/pdf');
 }
 
 // ─── RESET ─────────────────────────────────────────────────────────────
@@ -2904,6 +3299,7 @@ function renderBijlagen(){
         + '<div class="bij-card-info">'
         +   '<span class="bij-card-cat bij-cat-'+b.cat+'">'+(catLabels[b.cat]||b.cat)+'</span>'
         +   '<div class="bij-card-name">'+escHtml(b.naam)+'<span class="bij-sync-dot '+(b.driveFileId?'synced':'pending')+'"></span></div>'
+        +   (b.driveViewUrl ? '<a class="bij-drive-link" href="'+b.driveViewUrl+'" target="_blank">Drive openen</a>' : '')
         +   '<div class="bij-card-meta">'+b.datum+'</div>'
         + '</div>'
         + '</div>';
@@ -3875,9 +4271,321 @@ function markWerfDeletedOnDrive(werfId){
 }
 
 
+
+// ═══════════════════════════════════════════════════════════════
+//  RAPPORT UPLOAD NAAR DRIVE + DOCX GENERATIE
+// ═══════════════════════════════════════════════════════════════
+
+function uploadRapportToDrive(blob, fileName, mimeType){
+  if(!driveIsConnected() || !currentWerfId){ return; }
+  driveEnsureFolder().then(function(folderId){
+    return driveEnsureBijFolder(folderId, 'bij_'+currentWerfId).then(function(bijFolderId){
+      var boundary = 'rpt_' + Date.now();
+      var NL = '\r\n';
+      var meta = JSON.stringify({name: fileName, parents:[bijFolderId]});
+
+      return new Promise(function(resolve, reject){
+        var reader = new FileReader();
+        reader.onload = function(ev){
+          var binBuf = new Uint8Array(ev.target.result);
+          var enc = new TextEncoder();
+          var metaPart = enc.encode('--'+boundary+NL+'Content-Type: application/json'+NL+NL+meta+NL);
+          var dataPart = enc.encode('--'+boundary+NL+'Content-Type: '+mimeType+NL+NL);
+          var endPart  = enc.encode(NL+'--'+boundary+'--');
+          var combined = new Uint8Array(metaPart.length+dataPart.length+binBuf.length+endPart.length);
+          combined.set(metaPart,0);
+          combined.set(dataPart,metaPart.length);
+          combined.set(binBuf,metaPart.length+dataPart.length);
+          combined.set(endPart,metaPart.length+dataPart.length+binBuf.length);
+
+          fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink', {
+            method:'POST',
+            headers:{
+              'Authorization':'Bearer '+driveToken.access_token,
+              'Content-Type':'multipart/related; boundary='+boundary
+            },
+            body: combined
+          }).then(function(r){ return r.json(); }).then(function(f){
+            // Sla op als bijlage zodat het zichtbaar is in het tabblad
+            var bij = {
+              id: 'b_rpt_'+Date.now(),
+              werfId: currentWerfId,
+              naam: fileName,
+              cat: mimeType==='application/pdf' ? 'rapport' : 'docx',
+              type: mimeType,
+              datum: new Date().toLocaleDateString('nl-BE',{day:'numeric',month:'short',year:'numeric'}),
+              data: '', // geen base64 voor Drive-rapporten
+              driveFileId: f.id,
+              driveViewUrl: f.webViewLink,
+              driveSynced: new Date().toISOString()
+            };
+            dbPut('bijlagen', bij).then(function(){
+              renderBijlagen();
+              showToast('Opgeslagen op Drive: '+fileName,'success');
+              addSyncLog('up', 'Rapport geupload: '+fileName);
+            });
+          }).catch(reject);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(blob);
+      });
+    });
+  }).catch(function(e){
+    console.warn('Drive upload rapport mislukt:', e);
+  });
+}
+
+// ─── DOCX GENERATIE ──────────────────────────────────────────
+function generateDocx(){
+  if(typeof docx === 'undefined'){
+    showToast('DOCX library laadt nog, probeer opnieuw','');
+    return;
+  }
+  showToast('DOCX genereren...','');
+  setTimeout(function(){ _doDocx(); }, 300);
+}
+
+function _doDocx(){
+  var m = state.meta || {};
+  var D = docx;
+  var orange = 'f97316';
+  var navy   = '0a1628';
+  var slate  = '1e293b';
+  var mist   = '94a3b8';
+
+  function T(text, opts){
+    return new D.TextRun(Object.assign({text:String(text||''), font:'Arial', size:20}, opts||{}));
+  }
+  function B(text){ return T(text, {bold:true, color:'1a3560'}); }
+  function O(text){ return T(text, {bold:true, color:orange}); }
+
+  var border = {style:D.BorderStyle.SINGLE, size:4, color:'1a3560'};
+  var borders = {top:border,bottom:border,left:border,right:border};
+  var nb = {style:D.BorderStyle.NONE, size:0, color:'FFFFFF'};
+  var noBorders = {top:nb,bottom:nb,left:nb,right:nb};
+
+  function metaRow(l1,v1,l2,v2){
+    return new D.TableRow({children:[
+      new D.TableCell({borders:noBorders,width:{size:4500,type:D.WidthType.DXA},
+        margins:{top:60,bottom:60,left:0,right:80},
+        children:[new D.Paragraph({children:[B(l1+' '), T(v1||'-')]})]}),
+      new D.TableCell({borders:noBorders,width:{size:4500,type:D.WidthType.DXA},
+        margins:{top:60,bottom:60,left:80,right:0},
+        children:[new D.Paragraph({children:[B(l2+' '), T(v2||'-')]})]})
+    ]});
+  }
+
+  function secRow(item, ans, rem){
+    var ansColor = ans==='ja'?'16a34a':ans==='nee'?'dc2626':'475569';
+    return new D.TableRow({children:[
+      new D.TableCell({borders:{top:nb,bottom:{style:D.BorderStyle.SINGLE,size:1,color:'334155'},left:nb,right:nb},
+        width:{size:7500,type:D.WidthType.DXA},margins:{top:50,bottom:50,left:60,right:60},
+        children:[
+          new D.Paragraph({children:[T(item.q,{size:18,color:'cbd5e1'})]}),
+          rem ? new D.Paragraph({children:[T('-> '+rem,{size:16,color:'f97316',italics:true})]}) : new D.Paragraph({children:[T('')]})
+        ]}),
+      new D.TableCell({borders:{top:nb,bottom:{style:D.BorderStyle.SINGLE,size:1,color:'334155'},left:nb,right:nb},
+        width:{size:1500,type:D.WidthType.DXA},margins:{top:50,bottom:50,left:40,right:40},
+        children:[new D.Paragraph({alignment:D.AlignmentType.CENTER,
+          children:[T(ans?ans.toUpperCase():'OPEN',{bold:true,size:18,color:ansColor})]})]})
+    ]});
+  }
+
+  var children = [];
+
+  // Title
+  children.push(new D.Paragraph({spacing:{after:120},children:[
+    new D.TextRun({text:'PowerYourself', font:'Arial', size:48, bold:true, color:navy}),
+    T('   '),O('VGM Werkplekinspectie')
+  ]}));
+  children.push(new D.Paragraph({spacing:{after:80},border:{bottom:{style:D.BorderStyle.SINGLE,size:8,color:orange,space:4}},
+    children:[new D.TextRun({text:'Rondgangrapport — '+(m.datum||'-'), font:'Arial', size:28, bold:true, color:'1a3560'})]}));
+  children.push(new D.Paragraph({spacing:{after:60},children:[T('Gegenereerd: '+new Date().toLocaleString('nl-BE'),{size:18,color:mist})]}));
+
+  // Meta table
+  children.push(new D.Table({width:{size:9000,type:D.WidthType.DXA},columnWidths:[4500,4500],rows:[
+    metaRow('Werf:',m.werf,'Klant:',m.klant),
+    metaRow('Inspecteur:',m.naam,'Datum:',m.datum),
+    metaRow('Tijdstip:',m.tijd,'',''),
+  ]}));
+  children.push(new D.Paragraph({spacing:{after:160},children:[T('')]}));
+
+  // Stats
+  var allA=Object.values(state.answers||{});
+  var tot=SECTIONS.reduce(function(a,s){return a+s.items.length;},0);
+  var ja=allA.filter(function(v){return v==='ja';}).length;
+  var nee=allA.filter(function(v){return v==='nee';}).length;
+  var nvt=allA.filter(function(v){return v==='nvt';}).length;
+  children.push(new D.Paragraph({spacing:{after:60},children:[
+    O('SAMENVATTING   '),
+    T('OK: ',{bold:true,color:'22c55e'}),T(String(ja),{color:'22c55e'}),T('   '),
+    T('NOK: ',{bold:true,color:'ef4444'}),T(String(nee),{color:'ef4444'}),T('   '),
+    T('N/A: ',{color:mist}),T(String(nvt),{color:mist}),T('   '),
+    T('Open: ',{bold:true,color:'eab308'}),T(String(tot-ja-nee-nvt),{color:'eab308'}),
+  ]}));
+  children.push(new D.Paragraph({spacing:{after:200},border:{bottom:{style:D.BorderStyle.SINGLE,size:4,color:'334155'}},children:[T('')]}));
+
+  // Sections
+  SECTIONS.forEach(function(sec){
+    var hasAnswered = sec.items.some(function(it){ return state.answers[it.id]; });
+    if(!hasAnswered) return;
+    children.push(new D.Paragraph({spacing:{before:240,after:80},
+      border:{bottom:{style:D.BorderStyle.SINGLE,size:4,color:orange,space:2}},
+      children:[O(sec.title)]}));
+
+    var rows = [];
+    sec.items.forEach(function(item){
+      var ans = state.answers[item.id];
+      var rem = state.remarks[item.id];
+      if(!ans && !rem) return;
+      rows.push(secRow(item, ans, rem));
+    });
+    if(rows.length){
+      children.push(new D.Table({width:{size:9000,type:D.WidthType.DXA},columnWidths:[7500,1500],rows:rows}));
+    }
+    children.push(new D.Paragraph({spacing:{after:80},children:[T('')]}));
+  });
+
+  // Footer
+  children.push(new D.Paragraph({spacing:{before:240},
+    border:{top:{style:D.BorderStyle.SINGLE,size:4,color:'334155'}},
+    children:[T('PowerYourself (Arscensio bv) — Tongersesteenweg 348, 3720 Kortessem — BE0754.842.023',{size:16,color:mist})]}));
+
+  var document = new D.Document({
+    styles:{default:{document:{run:{font:'Arial',size:20,color:'1e293b'}}}},
+    sections:[{
+      properties:{page:{size:{width:11906,height:16838},margin:{top:1134,right:1134,bottom:1000,left:1134}}},
+      children:children
+    }]
+  });
+
+  D.Packer.toBlob(document).then(function(blob){
+    var fname='PYS_VGM_'+(m.werf||'werf').replace(/\s+/g,'_')+'_'+(m.datum||new Date().toISOString().split('T')[0])+'.docx';
+    // Download lokaal
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement ? document.createElement('a') : null;
+    // document is the docx doc — use window.document
+    var link = window.document.createElement('a');
+    link.href = url;
+    link.download = fname;
+    link.click();
+    URL.revokeObjectURL(url);
+    showToast('DOCX gedownload! Uploaden naar Drive...','success');
+    // Upload naar Drive
+    uploadRapportToDrive(blob, fname, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+  }).catch(function(e){
+    showToast('DOCX fout: '+e.message,'');
+    console.error(e);
+  });
+}
+
 // ─── CRASH PROTECTION ──────────────────────────────────────────────────
 document.addEventListener('visibilitychange',function(){ if(document.hidden && currentWerfId) saveCurrentWerf(); });
 window.addEventListener('beforeunload',function(){ if(currentWerfId) saveCurrentWerf(); });
+
+// === DEEL-LINK NAAR AANNEMER ===
+var AANNEMER_PAGE_URL = window.location.href.replace(/\/index\.html.*$/i, '/aannemer.html').replace(/\/$/, '/aannemer.html');
+
+function openShareAannemer(){
+  var ivEmail = document.getElementById('iv-email');
+  if(ivEmail && ivEmail.value){ document.getElementById('sa-email').value = ivEmail.value; }
+  var ivNaam = document.getElementById('iv-vw-naam');
+  if(ivNaam && ivNaam.value){ document.getElementById('sa-naam').value = ivNaam.value; }
+  buildShareLink();
+  document.getElementById('share-aannemer-modal').classList.add('open');
+}
+
+function closeShareAannemer(){
+  document.getElementById('share-aannemer-modal').classList.remove('open');
+}
+
+function buildShareLink(){
+  var werf  = (document.getElementById('iv-werf') ? document.getElementById('iv-werf').value : '') ||
+              (document.getElementById('meta-werf') ? document.getElementById('meta-werf').value : '');
+  var adres = (document.getElementById('iv-werfadres') ? document.getElementById('iv-werfadres').value : '');
+  var klant = (document.getElementById('meta-klant') ? document.getElementById('meta-klant').value : '');
+  var start = (document.getElementById('iv-start') ? document.getElementById('iv-start').value : '');
+  var params = new URLSearchParams();
+  if(werf) params.set('werf', werf);
+  if(adres) params.set('adres', adres);
+  if(klant) params.set('klant', klant);
+  if(start) params.set('start', start);
+  params.set('contact', 'PowerYourself - Stijn Dillen / Lucas Cuypers');
+  params.set('email', 'info@poweryourself.be');
+  params.set('type', 'beide');
+  var url = AANNEMER_PAGE_URL + '?' + params.toString();
+  var preview = document.getElementById('sa-link-preview');
+  if(preview) preview.textContent = url;
+  return url;
+}
+
+function copyShareLink(){
+  var url = buildShareLink();
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){ showToast('Link gekopieerd','success'); })
+      .catch(function(){ fallbackCopy(url); });
+  } else { fallbackCopy(url); }
+}
+
+function fallbackCopy(url){
+  var ta = document.createElement('textarea');
+  ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); showToast('Link gekopieerd','success'); }
+  catch(e){ showToast('Kopieren mislukt','err'); }
+  document.body.removeChild(ta);
+}
+
+function sendShareLink(){
+  var url = buildShareLink();
+  var email = document.getElementById('sa-email').value.trim();
+  var naam = document.getElementById('sa-naam').value.trim();
+  if(!email){ showToast('Vul een e-mailadres in','err'); return; }
+  var werf = (document.getElementById('iv-werf') ? document.getElementById('iv-werf').value : '') ||
+             (document.getElementById('meta-werf') ? document.getElementById('meta-werf').value : '');
+  var subject = encodeURIComponent('VGM Veiligheidsformulier - PowerYourself - ' + (werf||''));
+  var body = encodeURIComponent(
+    'Beste ' + (naam||'aannemer') + ',\n\n' +
+    'Voor de werf ' + (werf||'(zie link)') + ' vragen wij u om het veiligheidsformulier (RI&E + Intentieverklaring) in te vullen.\n\n' +
+    'Klik op onderstaande link om het formulier te openen op uw toestel:\n\n' +
+    url + '\n\n' +
+    'Het invullen duurt ongeveer 5-10 minuten. U dient digitaal te ondertekenen en het PDF terug te sturen naar info@poweryourself.be.\n\n' +
+    'Met vriendelijke groeten,\n' +
+    'PowerYourself (Arscensio bv)\n' +
+    'T: +32 476 86 41 38\n' +
+    'Tongersesteenweg 348, 3720 Kortessem'
+  );
+  window.location.href = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+  closeShareAannemer();
+  showToast('E-mail client geopend','success');
+}
+
 </script>
+
+<!-- SHARE AANNEMER MODAL -->
+<div id="share-aannemer-modal">
+  <div class="sa-body">
+    <div class="sa-title">Stuur deel-link naar aannemer</div>
+    <div class="sa-sub">De aannemer ontvangt een unieke link om zijn eigen RI&amp;E + Intentieverklaring in te vullen voor deze werf. Geen login nodig.</div>
+    <div class="sa-field">
+      <label>E-mail van de aannemer</label>
+      <input type="email" class="sa-input" id="sa-email" placeholder="info@aannemer.be" oninput="buildShareLink()">
+    </div>
+    <div class="sa-field">
+      <label>Naam contactpersoon (optioneel)</label>
+      <input type="text" class="sa-input" id="sa-naam" placeholder="Naam aannemer" oninput="buildShareLink()">
+    </div>
+    <div class="sa-field">
+      <label>Voorvertoning van de link</label>
+      <div class="sa-link-box" id="sa-link-preview">Vul werfgegevens in op de Intentieverklaring tab...</div>
+    </div>
+    <div class="sa-btns">
+      <button class="sa-btn sa-btn-cancel" onclick="closeShareAannemer()">Annuleer</button>
+      <button class="sa-btn sa-btn-copy" onclick="copyShareLink()">Link kopieren</button>
+      <button class="sa-btn sa-btn-mail" onclick="sendShareLink()">Verstuur per mail</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

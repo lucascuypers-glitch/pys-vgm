@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PowerYourself — Aannemer Veiligheidsformulier</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+html,body{height:100%;overscroll-behavior:none;}
+body{background:#0a1628;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:15px;line-height:1.4;}
+input,select,textarea,button{font-family:'Barlow',sans-serif;}
+.hd{font-family:'Barlow Condensed',sans-serif;}
+
+/* HEADER */
+.app-header{background:linear-gradient(90deg,#112244,#1a3560);border-bottom:2px solid #f97316;padding:12px 16px;position:sticky;top:0;z-index:100;}
+.app-title{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;}
+.app-title span{color:#f97316;}
+.app-sub{font-size:.7rem;color:#94a3b8;margin-top:1px;}
+
+/* WELCOME / CONTEXT */
+.welcome{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1.5px solid rgba(249,115,22,.4);margin:14px;padding:14px;border-radius:12px;}
+.welcome-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;color:#fb923c;margin-bottom:6px;}
+.welcome-txt{font-size:.85rem;color:#cbd5e1;line-height:1.5;}
+.welcome-werf{margin-top:10px;background:#0a1628;border-radius:8px;padding:10px 12px;font-size:.82rem;}
+.welcome-werf b{color:#f97316;font-family:'Barlow Condensed',sans-serif;}
+
+/* PROGRESS */
+.flow-progress{background:#112244;border-bottom:1px solid #1a3560;padding:10px 14px;display:flex;align-items:center;gap:8px;position:sticky;top:50px;z-index:99;}
+.fp-step{flex:1;height:5px;background:#334155;border-radius:3px;overflow:hidden;}
+.fp-step.done{background:linear-gradient(90deg,#ea580c,#f97316);}
+.fp-step.active{background:linear-gradient(90deg,#ea580c,#f97316);position:relative;}
+.fp-step.active::after{content:'';position:absolute;right:0;top:0;bottom:0;width:30%;background:rgba(255,255,255,.3);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.9;}}
+.fp-label{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;color:#94a3b8;white-space:nowrap;}
+
+/* SECTIONS */
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+
+.section{background:#1e293b;margin:10px 14px;border-radius:12px;padding:12px 14px;border-left:3px solid #f97316;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:#f97316;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(249,115,22,.2);}
+.section-sub{font-size:.78rem;color:#94a3b8;margin-bottom:10px;line-height:1.5;}
+
+/* FIELDS */
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.field{}
+.field.full{grid-column:1/-1;}
+.field label{font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:4px;}
+.field input,.field select,.field textarea{width:100%;background:#112244;border:1.5px solid #334155;border-radius:8px;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.88rem;padding:9px 11px;outline:none;appearance:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#f97316;}
+.field input.err,.field select.err{border-color:#ef4444;}
+select option{background:#1e293b;}
+.field-required::after{content:' *';color:#f97316;}
+
+/* RIE GEVAREN — vereenvoudigd voor aannemer */
+.gevaar-card{background:#1e293b;margin:0 14px 8px;border-radius:10px;padding:12px 14px;border-left:3px solid #1a3560;transition:border-color .2s;}
+.gevaar-card.active{border-left-color:#f97316;}
+.gevaar-row{display:flex;align-items:flex-start;gap:10px;}
+.gevaar-toggle{appearance:none;-webkit-appearance:none;width:42px;height:24px;background:#334155;border-radius:12px;cursor:pointer;position:relative;flex-shrink:0;margin-top:2px;transition:background .2s;}
+.gevaar-toggle:checked{background:#f97316;}
+.gevaar-toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;}
+.gevaar-toggle:checked::after{left:21px;}
+.gevaar-info{flex:1;min-width:0;}
+.gevaar-naam{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:#f1f5f9;line-height:1.3;}
+.gevaar-omschr{font-size:.75rem;color:#94a3b8;margin-top:2px;line-height:1.4;}
+.gevaar-detail{margin-top:10px;padding-top:10px;border-top:1px solid #1a3560;display:none;}
+.gevaar-card.active .gevaar-detail{display:block;}
+.kinney-label{font-size:.7rem;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.kinney-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;}
+.kf{}
+.kf label{font-size:.62rem;color:#94a3b8;font-weight:700;text-transform:uppercase;display:block;margin-bottom:3px;}
+.kf select{width:100%;background:#0a1628;border:1.5px solid #334155;border-radius:6px;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.75rem;padding:6px 8px;outline:none;}
+.kf select:focus{border-color:#f97316;}
+.score-display{background:#0a1628;border-radius:8px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;margin-top:6px;}
+.score-display span{font-size:.7rem;color:#94a3b8;}
+.score-display b{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;}
+.k-groen{color:#4ade80;} .k-aandacht{color:#fde047;} .k-rood{color:#fb923c;} .k-kritiek{color:#f87171;} .k-stop{color:#fecaca;}
+.maatregelen-aanvink{margin-top:8px;}
+.maatregelen-aanvink-lbl{font-size:.66rem;color:#94a3b8;font-weight:700;text-transform:uppercase;margin-bottom:5px;}
+.m-tag{display:inline-flex;align-items:center;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:20px;color:#93c5fd;font-size:.7rem;padding:3px 8px;margin:2px 3px 2px 0;cursor:pointer;}
+.m-tag.sel{background:rgba(59,130,246,.3);border-color:#3b82f6;color:#dbeafe;}
+
+.add-eigen-btn{display:flex;align-items:center;justify-content:center;gap:5px;margin:10px 14px;padding:11px;background:rgba(249,115,22,.07);border:1.5px dashed #f97316;border-radius:10px;color:#f97316;font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;width:calc(100% - 28px);}
+
+/* INTENTIEVERKLARING tekst */
+.iv-verklaring{margin:0 14px 10px;background:#112244;border:1.5px solid rgba(249,115,22,.3);border-radius:12px;padding:12px 14px;}
+.iv-ver-title{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:#f97316;margin-bottom:8px;}
+.iv-ver-item{display:flex;gap:6px;margin-bottom:6px;font-size:.82rem;color:#cbd5e1;line-height:1.4;}
+.iv-ver-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;color:#f97316;flex-shrink:0;}
+
+/* SIGNATURE */
+.sig-card{background:#1e293b;margin:10px 14px;border-radius:12px;padding:12px 14px;}
+.sig-title{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:#fb923c;margin-bottom:8px;}
+.sig-canvas{width:100%;height:140px;background:#0a1628;border:1.5px solid #334155;border-radius:8px;cursor:crosshair;touch-action:none;display:block;}
+.sig-canvas.signed{border-color:#22c55e;}
+.sig-actions{display:flex;gap:6px;margin-top:6px;}
+.sig-clear{flex:1;padding:7px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+.sig-status{flex:2;padding:7px;border-radius:8px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;}
+.sig-status.empty{background:rgba(148,163,184,.1);color:#94a3b8;}
+.sig-status.done{background:rgba(34,197,94,.15);color:#4ade80;border:1px solid rgba(34,197,94,.3);}
+
+/* NAVIGATION buttons */
+.flow-nav{display:flex;gap:8px;padding:12px 14px;background:#112244;border-top:1px solid #1a3560;position:sticky;bottom:0;}
+.fnav-btn{flex:1;padding:13px;border-radius:12px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.98rem;font-weight:800;cursor:pointer;}
+.fnav-prev{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;flex:0 0 90px;}
+.fnav-next{background:linear-gradient(90deg,#ea580c,#f97316);color:#fff;box-shadow:0 4px 14px rgba(249,115,22,.3);}
+.fnav-submit{background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.3);}
+
+/* SUCCESS screen */
+.success-screen{padding:40px 20px;text-align:center;}
+.success-icon{width:80px;height:80px;margin:0 auto 20px;border-radius:50%;background:rgba(34,197,94,.15);border:3px solid #22c55e;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:#22c55e;}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;color:#f1f5f9;margin-bottom:10px;}
+.success-txt{font-size:.92rem;color:#94a3b8;line-height:1.6;margin-bottom:20px;}
+.success-info{background:#1e293b;border-radius:10px;padding:14px;margin:0 auto;max-width:340px;text-align:left;font-size:.82rem;color:#cbd5e1;line-height:1.6;}
+.success-info b{color:#f97316;font-family:'Barlow Condensed',sans-serif;}
+
+/* TOAST */
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;border:1px solid #334155;color:#f1f5f9;border-radius:10px;padding:8px 14px;font-size:.85rem;opacity:0;transition:all .3s;z-index:999;white-space:nowrap;pointer-events:none;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.success{border-color:#22c55e;color:#86efac;}
+#toast.err{border-color:#ef4444;color:#fca5a5;}
+
+/* ADD MODAL */
+#add-modal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.84);display:none;align-items:flex-end;}
+#add-modal.open{display:flex;}
+.add-modal-body{background:#112244;border-radius:16px 16px 0 0;padding:18px;width:100%;max-height:80vh;overflow-y:auto;}
+.add-modal-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;color:#f97316;margin-bottom:12px;}
+.am-field{margin-bottom:8px;}
+.am-field label{font-size:.7rem;font-weight:600;color:#94a3b8;text-transform:uppercase;display:block;margin-bottom:4px;}
+.am-input{width:100%;background:#1e293b;border:1.5px solid #334155;border-radius:8px;color:#f1f5f9;font-family:'Barlow',sans-serif;font-size:.88rem;padding:9px 11px;outline:none;}
+.am-input:focus{border-color:#f97316;}
+.am-btns{display:flex;gap:8px;margin-top:12px;}
+.am-save{flex:1;padding:11px;background:#f97316;color:#fff;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;}
+.am-cancel{flex:1;padding:11px;background:#1e293b;color:#94a3b8;border:1.5px solid #334155;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="app-title hd">Power<span>Yourself</span></div>
+  <div class="app-sub">VGM Aannemer-formulier &mdash; Veiligheid op de werf</div>
+</div>
+
+<!-- Progress steps -->
+<div class="flow-progress">
+  <div class="fp-step active" id="fps-1"></div>
+  <div class="fp-step" id="fps-2"></div>
+  <div class="fp-step" id="fps-3"></div>
+  <div class="fp-step" id="fps-4"></div>
+  <div class="fp-label" id="fp-label">Stap 1/4</div>
+</div>
+
+<!-- ═══════════ STEP 1: WELCOME + GEGEVENS ═══════════ -->
+<div class="step-panel active" id="step-1">
+  <div class="welcome">
+    <div class="welcome-title">Welkom als onderaannemer</div>
+    <div class="welcome-txt">PowerYourself nodigt je uit om voor de hieronder vermelde werf je <b>risicoanalyse</b> en <b>intentieverklaring</b> in te vullen.<br><br>Dit is wettelijk verplicht voor onderaannemers. Het invullen duurt ongeveer <b>5 tot 10 minuten</b>.</div>
+    <div class="welcome-werf" id="welcome-werf">
+      <b>Werf laden...</b>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">1. Gegevens van uw onderneming</div>
+    <div class="fields-grid">
+      <div class="field full"><label class="field-required">Naam onderneming</label><input type="text" id="f-naam" placeholder="Bedrijfsnaam..."></div>
+      <div class="field"><label>BTW / Ondernemingsnr.</label><input type="text" id="f-btw" placeholder="BE0..."></div>
+      <div class="field"><label>VCA-certificering</label>
+        <select id="f-vca">
+          <option value="">-- Selecteer --</option>
+          <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>Geen</option>
+        </select>
+      </div>
+      <div class="field full"><label class="field-required">Adres onderneming</label><input type="text" id="f-adres" placeholder="Straat + nr, postcode + gemeente"></div>
+      <div class="field"><label>Telefoon / GSM</label><input type="tel" id="f-tel" placeholder="+32..."></div>
+      <div class="field"><label class="field-required">E-mailadres</label><input type="email" id="f-email" placeholder="info@..."></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">2. Werfverantwoordelijke</div>
+    <div class="fields-grid">
+      <div class="field"><label class="field-required">Naam + voornaam</label><input type="text" id="f-vw-naam" placeholder="Naam..."></div>
+      <div class="field"><label>Functie</label><input type="text" id="f-vw-func" placeholder="Ploegbaas..."></div>
+      <div class="field"><label>GSM op werf</label><input type="tel" id="f-vw-gsm" placeholder="+32..."></div>
+      <div class="field"><label>VOL-VCA attest aanwezig?</label>
+        <select id="f-vw-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
+      </div>
+      <div class="field"><label>Aantal personen op werf</label><input type="number" id="f-personen" min="1" placeholder="bijv. 3"></div>
+      <div class="field"><label>Iedereen Basis-VCA?</label>
+        <select id="f-basis-vca"><option value="">--</option><option>JA</option><option>NEEN</option></select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ STEP 2: RI&E ═══════════ -->
+<div class="step-panel" id="step-2">
+  <div class="section" style="border-left-color:#3b82f6;">
+    <div class="section-title" style="color:#60a5fa;">3. Risicoanalyse (RI&E)</div>
+    <div class="section-sub">Activeer de gevaren die op deze werf van toepassing zijn voor jouw activiteiten. Pas eventueel de scores aan en vink maatregelen aan die je toepast.<br><br><b style="color:#fb923c;">Tip:</b> Kinney-methode &mdash; R = W (kans) x B (blootstelling) x E (ernst)</div>
+  </div>
+  <div id="rie-container"></div>
+  <button class="add-eigen-btn" onclick="openAddModal()">+ Eigen gevaar toevoegen</button>
+</div>
+
+<!-- ═══════════ STEP 3: INTENTIEVERKLARING ═══════════ -->
+<div class="step-panel" id="step-3">
+  <div class="section">
+    <div class="section-title">4. Intentieverklaring &mdash; voor akkoord</div>
+    <div class="section-sub">Lees onderstaande verklaring zorgvuldig. Door het ondertekenen verklaar je dat je akkoord gaat met de inhoud.</div>
+  </div>
+
+  <div class="iv-verklaring">
+    <div class="iv-ver-title">Ik verklaar hierbij uitdrukkelijk:</div>
+    <div class="iv-ver-item"><span class="iv-ver-num">1.</span><span>Het VGM-plan van PowerYourself (Arscensio bv) te hebben ontvangen, gelezen en begrepen.</span></div>
+    <div class="iv-ver-item"><span class="iv-ver-num">2.</span><span>De gegevens in dit formulier naar waarheid te hebben ingevuld.</span></div>
+    <div class="iv-ver-item"><span class="iv-ver-num">3.</span><span>Mij te verbinden tot strikte naleving van alle verplichtingen inzake Veiligheid, Gezondheid en Milieu.</span></div>
+    <div class="iv-ver-item"><span class="iv-ver-num">4.</span><span>Alle werknemers die voor mijn rekening werken volledig te informeren over het VGM-plan.</span></div>
+    <div class="iv-ver-item"><span class="iv-ver-num">5.</span><span>Alle wettelijke voorschriften inzake welzijn op het werk en milieubescherming na te leven.</span></div>
+    <div class="iv-ver-item"><span class="iv-ver-num">6.</span><span>Bij niet-naleving aansprakelijk te zijn en sancties te aanvaarden.</span></div>
+  </div>
+
+  <div class="sig-card">
+    <div class="sig-title">Digitale handtekening</div>
+    <div style="font-size:.78rem;color:#94a3b8;margin-bottom:8px;">Onderteken in het kader hieronder met je vinger of muis.</div>
+    <canvas class="sig-canvas" id="sig-aannemer"></canvas>
+    <div class="sig-actions">
+      <button class="sig-clear" onclick="clearSig()">Wis</button>
+      <div class="sig-status empty" id="sig-status">Nog niet ondertekend</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="fields-grid">
+      <div class="field"><label class="field-required">Datum ondertekening</label><input type="date" id="f-datum"></div>
+      <div class="field"><label>Plaats</label><input type="text" id="f-plaats" placeholder="Plaats..."></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ STEP 4: VERSTUREN ═══════════ -->
+<div class="step-panel" id="step-4">
+  <div class="success-screen">
+    <div class="success-icon" id="success-icon">&#x2713;</div>
+    <div class="success-title" id="success-title">Klaar om te versturen</div>
+    <div class="success-txt" id="success-txt">
+      Je hebt alle stappen doorlopen. Klik hieronder om je formulier als PDF te downloaden en te versturen naar PowerYourself.
+    </div>
+    <div class="success-info" id="success-info">
+      <b>Wat gebeurt er nu?</b><br>
+      1. Het PDF wordt op je toestel gedownload<br>
+      2. Je e-mail-app opent automatisch<br>
+      3. <b>Voeg het PDF toe als bijlage</b> aan de e-mail<br>
+      4. Klik &laquo;Verzenden&raquo; in je e-mail-app
+    </div>
+  </div>
+</div>
+
+<!-- ADD GEVAAR MODAL -->
+<div id="add-modal">
+  <div class="add-modal-body">
+    <div class="add-modal-title">Eigen gevaar toevoegen</div>
+    <div class="am-field"><label>Gevaar / activiteit</label><input class="am-input" id="am-gevaar" placeholder="bijv. Snoeiwerk in bomen..."></div>
+    <div class="am-field"><label>Risico-omschrijving</label><input class="am-input" id="am-risico" placeholder="bijv. Valgevaar..."></div>
+    <div class="am-field"><label>Voornaamste maatregel</label><input class="am-input" id="am-maatregel" placeholder="bijv. Valharnas verplicht..."></div>
+    <div class="am-btns">
+      <button class="am-cancel" onclick="closeAddModal()">Annuleer</button>
+      <button class="am-save" onclick="saveCustomGevaar()">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="flow-nav">
+  <button class="fnav-btn fnav-prev" id="btn-prev" onclick="prevStep()" style="display:none;">&larr; Vorige</button>
+  <button class="fnav-btn fnav-next" id="btn-next" onclick="nextStep()">Volgende &rarr;</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  RI&E DATA — zelfde als hoofdapp
+// ════════════════════════════════════════════════════════════
+var W_OPTS=[{v:'0.1',l:'0.1 — Vrijwel onmogelijk'},{v:'0.2',l:'0.2 — Praktisch onmogelijk'},{v:'0.5',l:'0.5 — Zeer onwaarschijnlijk'},{v:'1',l:'1 — Mogelijk lange termijn'},{v:'3',l:'3 — Ongewoon, mogelijk'},{v:'6',l:'6 — Goed mogelijk'},{v:'10',l:'10 — Bijna zeker'}];
+var B_OPTS=[{v:'0.5',l:'0.5 — Zeer zelden'},{v:'1',l:'1 — Enkele keer per jaar'},{v:'2',l:'2 — Maandelijks'},{v:'3',l:'3 — Wekelijks'},{v:'6',l:'6 — Dagelijks'},{v:'10',l:'10 — Voortdurend'}];
+var E_OPTS=[{v:'1',l:'1 — Eerste hulp'},{v:'3',l:'3 — Werkongeschikt'},{v:'7',l:'7 — Ernstig letsel'},{v:'15',l:'15 — 1 dode'},{v:'40',l:'40 — Meerdere doden'},{v:'100',l:'100 — Catastrofaal'}];
+
+var RIE_DATA = [
+  {id:'g_hoogte',naam:'Werken op hoogte',omschr:'Valgevaar, vallende voorwerpen',w:'3',b:'6',e:'7',
+    maatregelen:['Valharnas + vanglijnen','Collectieve leuning / randbeveiliging','Gekeurde ladders','Helm verplicht','Activiteit uitstellen bij slecht weer']},
+  {id:'g_elek',naam:'Elektrisch werk (laagspanning)',omschr:'Elektrocutie, vlamboog, brandwonden',w:'3',b:'6',e:'7',
+    maatregelen:['Veiligstelling + hangslot','Uitsluitend BA4/BA5','Spanning loos meten','Isolerende PBM\'s']},
+  {id:'g_dakwerk',naam:'Dakwerk / zonnepanelen',omschr:'Valgevaar, weersinvloeden',w:'3',b:'6',e:'7',
+    maatregelen:['Valharnas verplicht >2m','Anti-slipschoenen','Max windkracht 5','Vangnetten bij breekbaar dak']},
+  {id:'g_ladder',naam:'Gebruik van ladders',omschr:'Misstap, omvallen ladder',w:'3',b:'6',e:'3',
+    maatregelen:['Gekeurde ladder','Plaatsing 75 graden','Steeds 3 steunpunten']},
+  {id:'g_ger',naam:'Elektrisch gereedschap',omschr:'Snijwonden, projectie, brandwonden',w:'3',b:'3',e:'3',
+    maatregelen:['Visuele controle voor gebruik','Veiligheidsbril','Handschoenen','Gekeurd materiaal']},
+  {id:'g_lasten',naam:'Manueel hanteren lasten',omschr:'Rugletsel, pletgevaar',w:'3',b:'3',e:'7',
+    maatregelen:['Max 25 kg per persoon','Ergonomische tilhouding','Met 2 personen','Tilhulpmiddelen']},
+  {id:'g_chem',naam:'Chemische producten',omschr:'Vergiftiging, huidcontact',w:'2',b:'2',e:'7',
+    maatregelen:['SDS-fiches op werf','PBM conform SDS','Gesloten verpakking','Spilkit aanwezig']},
+  {id:'g_lawaai',naam:'Lawaai (>85 dB)',omschr:'Permanent gehoorverlies',w:'3',b:'6',e:'3',
+    maatregelen:['Gehoorbescherming verplicht','Signalisatie risicozone','Tijd beperken']},
+  {id:'g_brand',naam:'Brand- en explosiegevaar',omschr:'Door elektrisch werk of chemicaliën',w:'0.5',b:'3',e:'15',
+    maatregelen:['Brandblusser aanwezig','Geen brandbaar materiaal nabij','Noodplan gekend']},
+  {id:'g_verkeer',naam:'Werkverkeer / mobiele machines',omschr:'Aanrijding, kantelen',w:'3',b:'6',e:'7',
+    maatregelen:['Verkeersplan + signalisatie','Fluovest','Bevoegde bestuurder']},
+];
+
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+var werfInfo = {};
+var rieGevaren = {}; // {id: {active, w, b, e, maatregelen, extra}}
+var customGevaren = [];
+var sigData = '';
+var currentStep = 1;
+var sigCanvas, sigCtx, sigDrawing = false;
+
+// ════════════════════════════════════════════════════════════
+//  URL PARAMS — werf info
+// ════════════════════════════════════════════════════════════
+function loadFromUrl(){
+  var p = new URLSearchParams(window.location.search);
+  werfInfo = {
+    werf:    p.get('werf')    || '',
+    klant:   p.get('klant')   || '',
+    adres:   p.get('adres')   || '',
+    start:   p.get('start')   || '',
+    contact: p.get('contact') || 'Lucas Cuypers',
+    email:   p.get('email')   || 'info@poweryourself.be',
+    type:    p.get('type')    || 'beide'  // 'rie', 'iv', or 'beide'
+  };
+  var html = '';
+  if(werfInfo.werf) html += '<b>Werf:</b> ' + escHtml(werfInfo.werf) + '<br>';
+  if(werfInfo.adres) html += '<b>Adres:</b> ' + escHtml(werfInfo.adres) + '<br>';
+  if(werfInfo.klant) html += '<b>Klant:</b> ' + escHtml(werfInfo.klant) + '<br>';
+  if(werfInfo.start) html += '<b>Startdatum:</b> ' + escHtml(werfInfo.start) + '<br>';
+  if(!html) html = '<b>Geen werfgegevens ontvangen.</b><br>Vraag je opdrachtgever om een nieuwe link.';
+  else html += '<br><b style="color:#94a3b8;">Contact:</b> ' + escHtml(werfInfo.contact) + ' &mdash; ' + escHtml(werfInfo.email);
+  document.getElementById('welcome-werf').innerHTML = html;
+}
+
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ════════════════════════════════════════════════════════════
+//  RI&E
+// ════════════════════════════════════════════════════════════
+function buildRIE(){
+  var c = document.getElementById('rie-container');
+  c.innerHTML = '';
+  var all = RIE_DATA.concat(customGevaren);
+  all.forEach(function(g){
+    c.appendChild(buildGevaarCard(g));
+  });
+}
+
+function buildGevaarCard(g){
+  var gs = rieGevaren[g.id] || {active:false, w:g.w, b:g.b, e:g.e, maatregelen:[], extra:''};
+  var R = calcR(gs.w, gs.b, gs.e);
+  var si = scoreInfo(R);
+  var div = document.createElement('div');
+  div.className = 'gevaar-card' + (gs.active ? ' active' : '');
+  div.id = 'gc-' + g.id;
+
+  var maatHtml = (g.maatregelen||[]).map(function(m){
+    var sel = (gs.maatregelen||[]).indexOf(m) > -1;
+    var safeMaat = m.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    return '<span class="m-tag ' + (sel?'sel':'') + '" onclick="toggleMaat(&quot;' + g.id + '&quot;,&quot;' + safeMaat + '&quot;,this)">' + escHtml(m) + '</span>';
+  }).join('');
+
+  div.innerHTML =
+    '<div class="gevaar-row">' +
+      '<input type="checkbox" class="gevaar-toggle" id="tg-' + g.id + '" ' + (gs.active?'checked':'') + ' onchange="toggleGevaar(&quot;' + g.id + '&quot;,this.checked)">' +
+      '<div class="gevaar-info">' +
+        '<div class="gevaar-naam">' + escHtml(g.naam) + '</div>' +
+        '<div class="gevaar-omschr">' + escHtml(g.omschr) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="gevaar-detail">' +
+      '<div class="kinney-label">Kinney-score (R = W &times; B &times; E)</div>' +
+      '<div class="kinney-row">' +
+        '<div class="kf"><label>W &mdash; Kans</label>' + selectHtml(W_OPTS, gs.w, 'updateScore(&quot;' + g.id + '&quot;,&quot;w&quot;,this.value)') + '</div>' +
+        '<div class="kf"><label>B &mdash; Bloot.</label>' + selectHtml(B_OPTS, gs.b, 'updateScore(&quot;' + g.id + '&quot;,&quot;b&quot;,this.value)') + '</div>' +
+        '<div class="kf"><label>E &mdash; Ernst</label>' + selectHtml(E_OPTS, gs.e, 'updateScore(&quot;' + g.id + '&quot;,&quot;e&quot;,this.value)') + '</div>' +
+      '</div>' +
+      '<div class="score-display"><span>Risicoscore</span><b class="' + si.cls + '" id="sv-' + g.id + '">' + R + ' &mdash; ' + si.lbl + '</b></div>' +
+      (maatHtml ? '<div class="maatregelen-aanvink"><div class="maatregelen-aanvink-lbl">Maatregelen die ik toepas:</div>' + maatHtml + '</div>' : '') +
+    '</div>';
+  return div;
+}
+
+function selectHtml(opts, sel, onchg){
+  return '<select onchange="' + onchg + '">' + opts.map(function(o){
+    return '<option value="' + o.v + '" ' + (o.v===sel?'selected':'') + '>' + o.l + '</option>';
+  }).join('') + '</select>';
+}
+
+function calcR(w, b, e){ return Math.round(parseFloat(w||0) * parseFloat(b||0) * parseFloat(e||0)); }
+
+function scoreInfo(R){
+  if(R<20)  return {cls:'k-groen',    lbl:'Geen actie'};
+  if(R<70)  return {cls:'k-aandacht', lbl:'Aandacht'};
+  if(R<200) return {cls:'k-rood',     lbl:'Verminderen'};
+  if(R<400) return {cls:'k-kritiek',  lbl:'Onmiddellijk'};
+  return       {cls:'k-stop',         lbl:'STOP'};
+}
+
+function getGevaarById(id){
+  var all = RIE_DATA.concat(customGevaren);
+  return all.find(function(g){ return g.id === id; });
+}
+
+function initGS(id){
+  if(!rieGevaren[id]){
+    var g = getGevaarById(id);
+    rieGevaren[id] = {active:false, w:g?g.w:'3', b:g?g.b:'3', e:g?g.e:'7', maatregelen:[], extra:''};
+  }
+}
+
+function toggleGevaar(id, active){
+  initGS(id);
+  rieGevaren[id].active = active;
+  var card = document.getElementById('gc-' + id);
+  if(card) card.classList.toggle('active', active);
+}
+
+function updateScore(id, field, val){
+  initGS(id);
+  rieGevaren[id][field] = val;
+  var R = calcR(rieGevaren[id].w, rieGevaren[id].b, rieGevaren[id].e);
+  var si = scoreInfo(R);
+  var sv = document.getElementById('sv-' + id);
+  if(sv){ sv.className = si.cls; sv.innerHTML = R + ' &mdash; ' + si.lbl; }
+}
+
+function toggleMaat(id, m, el){
+  initGS(id);
+  var list = rieGevaren[id].maatregelen;
+  var idx = list.indexOf(m);
+  if(idx > -1) list.splice(idx, 1);
+  else list.push(m);
+  el.classList.toggle('sel', list.indexOf(m) > -1);
+}
+
+// CUSTOM GEVAAR
+function openAddModal(){ document.getElementById('add-modal').classList.add('open'); }
+function closeAddModal(){ document.getElementById('add-modal').classList.remove('open'); }
+function saveCustomGevaar(){
+  var naam = document.getElementById('am-gevaar').value.trim();
+  var risico = document.getElementById('am-risico').value.trim();
+  var maatr = document.getElementById('am-maatregel').value.trim();
+  if(!naam){ showToast('Vul een gevaar in', 'err'); return; }
+  customGevaren.push({
+    id: 'custom_' + Date.now(),
+    naam: naam,
+    omschr: risico || '-',
+    w: '3', b: '3', e: '7',
+    maatregelen: maatr ? [maatr] : []
+  });
+  document.getElementById('am-gevaar').value = '';
+  document.getElementById('am-risico').value = '';
+  document.getElementById('am-maatregel').value = '';
+  closeAddModal();
+  buildRIE();
+  showToast('Gevaar toegevoegd', 'success');
+}
+
+// ════════════════════════════════════════════════════════════
+//  SIGNATURE
+// ════════════════════════════════════════════════════════════
+function initSignature(){
+  sigCanvas = document.getElementById('sig-aannemer');
+  if(!sigCanvas) return;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCanvas.width = sigCanvas.offsetWidth || 320;
+  sigCanvas.height = 140;
+  sigCtx.fillStyle = '#0a1628';
+  sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+  if(sigData){
+    var img = new Image();
+    img.onload = function(){ sigCtx.drawImage(img, 0, 0); markSigned(); };
+    img.src = sigData;
+  }
+  function getPos(e){
+    var r = sigCanvas.getBoundingClientRect();
+    var src = e.touches ? e.touches[0] : e;
+    return [src.clientX - r.left, src.clientY - r.top];
+  }
+  function start(e){ e.preventDefault(); var p = getPos(e); sigDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(p[0], p[1]); }
+  function move(e){ e.preventDefault(); if(!sigDrawing) return; var p = getPos(e); sigCtx.lineTo(p[0], p[1]); sigCtx.strokeStyle = '#f97316'; sigCtx.lineWidth = 2.5; sigCtx.lineCap = 'round'; sigCtx.stroke(); }
+  function end(e){ e.preventDefault(); if(sigDrawing){ sigDrawing = false; sigData = sigCanvas.toDataURL('image/png'); markSigned(); } }
+  sigCanvas.addEventListener('touchstart', start, {passive:false});
+  sigCanvas.addEventListener('touchmove', move, {passive:false});
+  sigCanvas.addEventListener('touchend', end, {passive:false});
+  sigCanvas.addEventListener('mousedown', start);
+  sigCanvas.addEventListener('mousemove', move);
+  sigCanvas.addEventListener('mouseup', end);
+}
+
+function clearSig(){
+  if(!sigCtx) return;
+  sigCtx.fillStyle = '#0a1628';
+  sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+  sigData = '';
+  document.getElementById('sig-status').className = 'sig-status empty';
+  document.getElementById('sig-status').textContent = 'Nog niet ondertekend';
+  sigCanvas.classList.remove('signed');
+}
+
+function markSigned(){
+  document.getElementById('sig-status').className = 'sig-status done';
+  document.getElementById('sig-status').textContent = 'Ondertekend';
+  sigCanvas.classList.add('signed');
+}
+
+// ════════════════════════════════════════════════════════════
+//  STEP NAVIGATION
+// ════════════════════════════════════════════════════════════
+function showStep(n){
+  currentStep = n;
+  for(var i = 1; i <= 4; i++){
+    document.getElementById('step-' + i).classList.toggle('active', i === n);
+    var fps = document.getElementById('fps-' + i);
+    fps.classList.remove('active', 'done');
+    if(i < n) fps.classList.add('done');
+    else if(i === n) fps.classList.add('active');
+  }
+  document.getElementById('fp-label').textContent = 'Stap ' + n + '/4';
+  // Buttons
+  var prev = document.getElementById('btn-prev');
+  var next = document.getElementById('btn-next');
+  prev.style.display = n > 1 ? 'block' : 'none';
+  if(n === 4){
+    next.className = 'fnav-btn fnav-submit';
+    next.textContent = 'PDF + E-mail versturen';
+    next.onclick = submitForm;
+  } else {
+    next.className = 'fnav-btn fnav-next';
+    next.textContent = 'Volgende →';
+    next.onclick = nextStep;
+  }
+  // Init signature on step 3
+  if(n === 3) setTimeout(initSignature, 200);
+  window.scrollTo(0, 0);
+}
+
+function nextStep(){
+  if(!validateStep(currentStep)) return;
+  if(currentStep < 4) showStep(currentStep + 1);
+}
+
+function prevStep(){ if(currentStep > 1) showStep(currentStep - 1); }
+
+function validateStep(n){
+  var missing = [];
+  if(n === 1){
+    if(!val('f-naam')) missing.push('Naam onderneming');
+    if(!val('f-adres')) missing.push('Adres onderneming');
+    if(!val('f-email')) missing.push('E-mailadres');
+    if(!val('f-vw-naam')) missing.push('Naam werfverantwoordelijke');
+  } else if(n === 2){
+    var anyActive = Object.values(rieGevaren).some(function(g){ return g.active; });
+    if(!anyActive){
+      showToast('Activeer minstens 1 gevaar voor jouw werkzaamheden', 'err');
+      return false;
+    }
+  } else if(n === 3){
+    if(!sigData){ missing.push('Handtekening'); }
+    if(!val('f-datum')) missing.push('Datum');
+  }
+  if(missing.length){
+    showToast('Vul nog in: ' + missing.join(', '), 'err');
+    return false;
+  }
+  return true;
+}
+
+function val(id){
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+// ════════════════════════════════════════════════════════════
+//  PDF GENERATION
+// ════════════════════════════════════════════════════════════
+function buildPdf(){
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({orientation:'p', unit:'mm', format:'a4'});
+  var pw = 210, ph = 297, mg = 14;
+  var y = mg;
+
+  function ck(n){ if(y + (n||20) > ph - 12) { doc.addPage(); y = mg; } }
+
+  // Header band
+  doc.setFillColor(249, 115, 22); doc.rect(0, 0, pw, 3, 'F');
+  doc.setFillColor(10, 22, 40);   doc.rect(0, 3, pw, 26, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
+  doc.text('PowerYourself - Aannemer Veiligheidsformulier', mg, 14);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(170, 170, 170);
+  doc.text('Risicoanalyse + Intentieverklaring - Onderaannemer', mg, 21);
+  doc.setTextColor(249, 115, 22); doc.setFontSize(7.5);
+  doc.text(new Date().toLocaleDateString('nl-BE'), pw-mg, 21, {align:'right'});
+  y = 35;
+
+  // Werfgegevens
+  doc.setFillColor(17, 34, 68); doc.roundedRect(mg, y, pw-mg*2, 20, 3, 3, 'F');
+  doc.setTextColor(249, 115, 22); doc.setFont('helvetica', 'bold'); doc.setFontSize(7);
+  doc.text('WERF', mg+3, y+5);
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+  doc.text((werfInfo.werf||'-') + (werfInfo.adres ? ' - ' + werfInfo.adres : ''), mg+3, y+11);
+  doc.text('Klant: ' + (werfInfo.klant||'-') + '   |   Start: ' + (werfInfo.start||'-'), mg+3, y+17);
+  y += 26;
+
+  // Section header helper
+  function sec(t){
+    ck(13);
+    doc.setFillColor(26, 53, 96); doc.rect(mg, y, pw-mg*2, 8, 'F');
+    doc.setFillColor(249, 115, 22); doc.rect(mg, y, 3, 8, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+    doc.text(t, mg+5, y+5.8);
+    y += 11;
+  }
+
+  function row(l, v){
+    ck(8);
+    doc.setFillColor(30, 41, 59); doc.rect(mg, y, pw-mg*2, 7, 'F');
+    doc.setTextColor(148, 163, 184); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+    doc.text(l, mg+2, y+3);
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    doc.text(String(v || '-').substring(0, 80), mg+2, y+6);
+    y += 8;
+  }
+
+  function row2(l1, v1, l2, v2){
+    ck(8);
+    var hw = (pw-mg*2) / 2;
+    doc.setFillColor(30, 41, 59); doc.rect(mg, y, pw-mg*2, 7, 'F');
+    doc.setTextColor(148, 163, 184); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+    doc.text(l1, mg+2, y+3);
+    doc.text(l2, mg+hw+2, y+3);
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    doc.text(String(v1 || '-').substring(0, 38), mg+2, y+6);
+    doc.text(String(v2 || '-').substring(0, 38), mg+hw+2, y+6);
+    y += 8;
+  }
+
+  sec('1. GEGEVENS ONDERNEMING');
+  row2('Naam:', val('f-naam'), 'BTW / Ondernemingsnr.:', val('f-btw'));
+  row('Adres:', val('f-adres'));
+  row2('Telefoon:', val('f-tel'), 'E-mail:', val('f-email'));
+  row('VCA-certificering:', val('f-vca'));
+
+  sec('2. WERFVERANTWOORDELIJKE');
+  row2('Naam:', val('f-vw-naam'), 'Functie:', val('f-vw-func'));
+  row2('GSM op werf:', val('f-vw-gsm'), 'VOL-VCA attest:', val('f-vw-vca'));
+  row2('Aantal personen op werf:', val('f-personen'), 'Iedereen Basis-VCA?:', val('f-basis-vca'));
+
+  // RI&E sectie
+  ck(13);
+  sec('3. RISICOANALYSE (Kinney)');
+  ck(8);
+  doc.setFillColor(26, 41, 66); doc.rect(mg, y, pw-mg*2, 6, 'F');
+  doc.setFillColor(249, 115, 22); doc.rect(mg, y, 3, 6, 'F');
+  doc.setTextColor(200, 210, 220); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.2);
+  doc.text('Gevaar / omschrijving', mg+5, y+4);
+  doc.text('W',   mg+72, y+4);
+  doc.text('B',   mg+82, y+4);
+  doc.text('E',   mg+92, y+4);
+  doc.text('R',   mg+102, y+4);
+  doc.text('Maatregelen', mg+112, y+4);
+  y += 8;
+
+  var actieve = Object.entries(rieGevaren)
+    .filter(function(e){ return e[1].active; })
+    .map(function(e){
+      var g = getGevaarById(e[0]);
+      var R = calcR(e[1].w, e[1].b, e[1].e);
+      return {g:g, gs:e[1], R:R};
+    })
+    .sort(function(a,b){ return b.R - a.R; });
+
+  actieve.forEach(function(x){
+    if(!x.g) return;
+    ck(15);
+    var rc = x.R<20?[34,197,94]:x.R<70?[234,179,8]:x.R<200?[249,115,22]:x.R<400?[239,68,68]:[200,0,0];
+    doc.setFillColor(26, 41, 66); doc.rect(mg, y, pw-mg*2, 13, 'F');
+    doc.setFillColor(rc[0], rc[1], rc[2]); doc.rect(mg, y, 3, 13, 'F');
+    doc.setTextColor(220, 230, 240); doc.setFont('helvetica', 'bold'); doc.setFontSize(7);
+    doc.text(x.g.naam.substring(0, 38), mg+5, y+5);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(5.8); doc.setTextColor(160, 170, 180);
+    doc.text(x.g.omschr.substring(0, 42), mg+5, y+10);
+    doc.setTextColor(rc[0], rc[1], rc[2]); doc.setFont('helvetica', 'bold'); doc.setFontSize(7);
+    doc.text(x.gs.w || '-', mg+72, y+7);
+    doc.text(x.gs.b || '-', mg+82, y+7);
+    doc.text(x.gs.e || '-', mg+92, y+7);
+    doc.setFontSize(9); doc.text(String(x.R), mg+102, y+8);
+    var ml = (x.gs.maatregelen || []).slice(0, 3).join('; ') || '-';
+    doc.setTextColor(190, 205, 220); doc.setFont('helvetica', 'normal'); doc.setFontSize(5.5);
+    var lines = doc.splitTextToSize(ml, 62);
+    doc.text(lines[0] || '', mg+112, y+5);
+    if(lines[1]) doc.text(lines[1], mg+112, y+9);
+    y += 14;
+  });
+
+  // Intentieverklaring
+  doc.addPage(); y = mg;
+  doc.setFillColor(249, 115, 22); doc.rect(0, 0, pw, 3, 'F');
+  doc.setFillColor(10, 22, 40); doc.rect(0, 3, pw, 20, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+  doc.text('Intentieverklaring VGM', mg, 15);
+  y = 30;
+
+  var verklaringen = [
+    '1. Het VGM-plan van PowerYourself (Arscensio bv) te hebben ontvangen, gelezen en begrepen.',
+    '2. De gegevens in dit formulier naar waarheid te hebben ingevuld.',
+    '3. Mij te verbinden tot strikte naleving van alle verplichtingen inzake Veiligheid, Gezondheid en Milieu.',
+    '4. Alle werknemers die voor mijn rekening werken volledig te informeren over het VGM-plan.',
+    '5. Alle wettelijke voorschriften inzake welzijn op het werk en milieubescherming na te leven.',
+    '6. Bij niet-naleving aansprakelijk te zijn en sancties te aanvaarden.'
+  ];
+
+  doc.setFillColor(26, 41, 59); doc.rect(mg, y, pw-mg*2, verklaringen.length*8 + 10, 'F');
+  doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+  doc.text('Ondergetekende verklaart hierbij uitdrukkelijk:', mg+3, y+6);
+  y += 11;
+  verklaringen.forEach(function(v){
+    var lines = doc.splitTextToSize(v, pw-mg*2-6);
+    doc.setTextColor(200, 210, 225); doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+    doc.text(lines, mg+3, y+4);
+    y += 8;
+  });
+  y += 6;
+
+  // Handtekening
+  doc.setFillColor(17, 34, 68); doc.roundedRect(mg, y, pw-mg*2, 60, 3, 3, 'F');
+  doc.setTextColor(249, 115, 22); doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+  doc.text('HANDTEKENING ONDERAANNEMER', mg+3, y+6);
+  doc.setTextColor(220, 230, 240); doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+  doc.text('Naam: ' + (val('f-vw-naam') || '-'), mg+3, y+13);
+  doc.text('Onderneming: ' + (val('f-naam') || '-'), mg+3, y+19);
+  doc.text('Datum: ' + (val('f-datum') || '-') + (val('f-plaats') ? ' - ' + val('f-plaats') : ''), mg+3, y+25);
+  if(sigData){
+    try{ doc.addImage(sigData, 'PNG', mg+3, y+28, pw-mg*2-6, 28); } catch(e){}
+  } else {
+    doc.setTextColor(100, 100, 100); doc.text('(geen handtekening)', mg+3, y+45);
+  }
+  y += 65;
+
+  // Footer
+  var tp = doc.internal.getNumberOfPages();
+  for(var p = 1; p <= tp; p++){
+    doc.setPage(p);
+    doc.setFillColor(10, 22, 40); doc.rect(0, ph-8, pw, 8, 'F');
+    doc.setTextColor(70, 90, 120); doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+    doc.text('PowerYourself (Arscensio bv) - Tongersesteenweg 348, 3720 Kortessem - Aannemer-formulier', mg, ph-3);
+    doc.text(p + '/' + tp, pw-mg, ph-3, {align:'right'});
+  }
+
+  return doc;
+}
+
+// ════════════════════════════════════════════════════════════
+//  SUBMIT
+// ════════════════════════════════════════════════════════════
+function submitForm(){
+  if(!validateStep(3)){ showStep(3); return; }
+  showToast('PDF wordt aangemaakt...', '');
+  setTimeout(function(){
+    try{
+      var doc = buildPdf();
+      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+      doc.save(fname);
+
+      // Open mailto with instructions
+      setTimeout(function(){
+        var ourEmail = werfInfo.email || 'info@poweryourself.be';
+        var subject = encodeURIComponent('VGM Aannemer-formulier - ' + (val('f-naam')||'') + ' - ' + (werfInfo.werf||''));
+        var body = encodeURIComponent(
+          'Beste,\n\n'+
+          'In bijlage vindt u het ingevulde aannemer-veiligheidsformulier (RI&E + Intentieverklaring).\n\n'+
+          '-- Werfgegevens --\n'+
+          'Werf: ' + (werfInfo.werf||'-') + '\n'+
+          'Adres: ' + (werfInfo.adres||'-') + '\n'+
+          'Klant: ' + (werfInfo.klant||'-') + '\n\n'+
+          '-- Onderneming --\n'+
+          'Naam: ' + val('f-naam') + '\n'+
+          'BTW: ' + val('f-btw') + '\n'+
+          'E-mail: ' + val('f-email') + '\n'+
+          'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n\n'+
+          'BELANGRIJK: gelieve het PDF dat hieronder werd gedownload manueel als bijlage toe te voegen aan deze e-mail.\n\n'+
+          'PDF-bestandsnaam: ' + fname + '\n\n'+
+          'Met vriendelijke groeten,\n'+
+          val('f-vw-naam') + '\n' + val('f-naam')
+        );
+        window.location.href = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
+      }, 500);
+
+      // Show success screen
+      document.getElementById('success-icon').innerHTML = '&#x2713;';
+      document.getElementById('success-title').textContent = 'PDF gedownload — vergeet niet als bijlage toe te voegen!';
+      document.getElementById('success-txt').innerHTML = 'Je e-mail-app opent nu automatisch. <b style="color:#fb923c;">Voeg het zojuist gedownloade PDF-bestand toe als bijlage</b> en klik daarna op &laquo;Verzenden&raquo;.';
+      document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Bestaat uit 2 bijlagen?</b> Eerst de PDF zelf opzoeken op je toestel (Downloads-map), dan koppelen aan de mail.';
+      document.getElementById('btn-next').style.display = 'none';
+      document.getElementById('btn-prev').style.display = 'none';
+      showToast('Klaar! Voeg PDF nu toe als bijlage aan de mail', 'success');
+
+    } catch(e){
+      console.error(e);
+      showToast('Fout bij PDF: ' + e.message, 'err');
+    }
+  }, 200);
+}
+
+// ════════════════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════════════════
+var tT;
+function showToast(msg, type){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || '');
+  clearTimeout(tT);
+  tT = setTimeout(function(){ t.className = ''; }, 4000);
+}
+
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+loadFromUrl();
+buildRIE();
+showStep(1);
+// Pre-fill date
+var today = new Date().toISOString().split('T')[0];
+var dateField = document.getElementById('f-datum');
+if(dateField) dateField.value = today;
+
+</script>
+</body>
+</html>
