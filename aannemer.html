@@ -134,6 +134,48 @@ select option{background:#1e293b;}
 .am-btns{display:flex;gap:8px;margin-top:12px;}
 .am-save{flex:1;padding:11px;background:#f97316;color:#fff;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;}
 .am-cancel{flex:1;padding:11px;background:#1e293b;color:#94a3b8;border:1.5px solid #334155;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;}
+
+/* VGM INFO BLOCK */
+.vgm-info-card{background:#1e293b;margin:0 14px 10px;border-radius:12px;border:1.5px solid #334155;overflow:hidden;}
+.vgm-info-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.02));border-bottom:1px solid #334155;}
+.vgm-info-hdr-left{display:flex;align-items:center;gap:10px;}
+.vgm-info-icon{width:32px;height:32px;border-radius:8px;background:rgba(59,130,246,.15);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.vgm-info-title{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:#93c5fd;}
+.vgm-info-sub{font-size:.7rem;color:#94a3b8;margin-top:1px;}
+.vgm-info-chev{color:#94a3b8;font-size:.9rem;transition:transform .2s;}
+.vgm-info-card.open .vgm-info-chev{transform:rotate(90deg);}
+.vgm-info-body{display:none;padding:14px;}
+.vgm-info-card.open .vgm-info-body{display:block;}
+.vgm-block{margin-bottom:14px;}
+.vgm-block:last-child{margin-bottom:0;}
+.vgm-block-title{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;color:#f97316;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid rgba(249,115,22,.25);}
+.vgm-block-title.red{color:#f87171;border-bottom-color:rgba(239,68,68,.25);}
+.vgm-block-title.green{color:#4ade80;border-bottom-color:rgba(34,197,94,.25);}
+.vgm-block-title.yellow{color:#fde047;border-bottom-color:rgba(234,179,8,.25);}
+.vgm-rule{display:flex;gap:7px;padding:5px 0;font-size:.82rem;color:#cbd5e1;line-height:1.4;}
+.vgm-rule-num{color:#f97316;font-weight:800;font-family:'Barlow Condensed',sans-serif;flex-shrink:0;min-width:14px;}
+.vgm-rule-num.red{color:#f87171;}
+.vgm-rule-num.green{color:#4ade80;}
+.vgm-rule-num.yellow{color:#fde047;}
+.vgm-rule b{color:#f1f5f9;}
+.vgm-emergency-box{background:rgba(239,68,68,.1);border:1.5px solid rgba(239,68,68,.4);border-radius:10px;padding:10px 12px;margin-top:10px;display:flex;align-items:center;gap:10px;}
+.vgm-emergency-num{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:800;color:#f87171;line-height:1;}
+.vgm-emergency-info{flex:1;}
+.vgm-emergency-title{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;color:#fca5a5;}
+.vgm-emergency-sub{font-size:.7rem;color:#94a3b8;}
+
+
+/* CHOICE BUTTONS step 4 */
+.choice-grid{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px;}
+.choice-btn{padding:16px;border-radius:14px;border:none;font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;text-align:left;}
+.choice-btn .ch-icon{font-size:1.6rem;flex-shrink:0;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,.15);}
+.choice-btn .ch-text{flex:1;}
+.choice-btn .ch-title{font-size:1.05rem;font-weight:800;line-height:1.2;}
+.choice-btn .ch-sub{font-size:.72rem;font-weight:600;opacity:.85;margin-top:2px;}
+.cb-mail{background:linear-gradient(90deg,#3b82f6,#60a5fa);color:#fff;box-shadow:0 4px 14px rgba(59,130,246,.35);}
+.cb-whatsapp{background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.35);}
+.cb-back{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
+
 </style>
 </head>
 <body>
@@ -162,6 +204,73 @@ select option{background:#1e293b;}
     </div>
   </div>
 
+  <!-- VGM INFO BLOCK (uitklapbaar) -->
+  <div class="vgm-info-card" id="vgm-info-card">
+    <div class="vgm-info-hdr" onclick="toggleVgmInfo()">
+      <div class="vgm-info-hdr-left">
+        <div class="vgm-info-icon">&#9432;</div>
+        <div>
+          <div class="vgm-info-title">VGM Info — Veiligheidsregels PowerYourself</div>
+          <div class="vgm-info-sub">Klik om uit te klappen &mdash; lezen voor invullen</div>
+        </div>
+      </div>
+      <div class="vgm-info-chev">&#9656;</div>
+    </div>
+    <div class="vgm-info-body">
+
+      <div class="vgm-block">
+        <div class="vgm-block-title">5 absolute veiligheidsregels</div>
+        <div class="vgm-rule"><span class="vgm-rule-num">1.</span><span><b>PBM altijd dragen:</b> helm, S3-schoenen, handschoenen, bril bij projectierisico, gehoorbescherming &gt;85 dB</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">2.</span><span><b>Hoogte &gt;2m:</b> valharnas of collectieve beveiliging. Altijd. Geen uitzonderingen.</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">3.</span><span><b>Elektrisch werk:</b> uitsluitend BA4/BA5-bevoegden. Altijd veiligstellen met hangslot voor aanvang.</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">4.</span><span><b>Gereedschap:</b> alleen gekeurd materiaal. Visuele controle voor elk gebruik.</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">5.</span><span><b>Werkplek:</b> netjes houden. Looppaden vrij. Nooduitgangen nooit blokkeren.</span></div>
+      </div>
+
+      <div class="vgm-block">
+        <div class="vgm-block-title red">Bij een incident — onthoud dit</div>
+        <div class="vgm-rule"><span class="vgm-rule-num red">1.</span><span>Bel <b>112</b> bij letsel of brand</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num red">2.</span><span>Bel <b>Lucas Cuypers: +32 476 86 41 38</b></span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num red">3.</span><span>Meld binnen <b>24 uur</b> via incidentformulier</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num red">4.</span><span>Slachtoffer rijdt <b>nooit</b> zelfstandig naar de arts</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num red">5.</span><span>Praat <b>nooit</b> met de pers &mdash; alles via de bestuurders</span></div>
+      </div>
+
+      <div class="vgm-block">
+        <div class="vgm-block-title green">Milieu — 3 basisregels</div>
+        <div class="vgm-rule"><span class="vgm-rule-num green">1.</span><span>Afval scheiden: <b>schroot / huishoudelijk / gevaarlijk</b></span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num green">2.</span><span>SDS-fiche raadplegen voor elk chemisch product</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num green">3.</span><span>Gasflessen: verticaal, geborgd, niet in de zon, nooit in kelder</span></div>
+      </div>
+
+      <div class="vgm-block">
+        <div class="vgm-block-title yellow">Alcohol &amp; drugs</div>
+        <div class="vgm-rule"><span class="vgm-rule-num yellow">&#9679;</span><span>Nultolerantie tijdens de werken</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num yellow">&#9679;</span><span>Eerste overtreding: informeel gesprek met bestuurder</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num yellow">&#9679;</span><span>Herhaling: <b>eenzijdige contractverbreking</b></span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num yellow">&#9679;</span><span>Roken: enkel buiten, enkel tijdens pauzes</span></div>
+      </div>
+
+      <div class="vgm-block">
+        <div class="vgm-block-title">Basisverplichtingen onderaannemer</div>
+        <div class="vgm-rule"><span class="vgm-rule-num">&#9679;</span><span>VGM-handboek gelezen en intentieverklaring <b>ondertekend</b></span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">&#9679;</span><span>Geldig VCA-attest: <b>Basis voor uitvoerenden</b>, VOL voor leidinggevenden</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">&#9679;</span><span>Sociaal en fiscaal in orde (RSZ + BTW attest)</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">&#9679;</span><span>Verzekerd: <b>burgerlijke aansprakelijkheid</b> + arbeidsongevallen</span></div>
+        <div class="vgm-rule"><span class="vgm-rule-num">&#9679;</span><span>Buitenlandse werknemers: <b>Limosa-melding</b> verplicht</span></div>
+      </div>
+
+      <div class="vgm-emergency-box">
+        <div class="vgm-emergency-num">112</div>
+        <div class="vgm-emergency-info">
+          <div class="vgm-emergency-title">Noodnummer + bestuurder</div>
+          <div class="vgm-emergency-sub">Lucas Cuypers &mdash; +32 476 86 41 38</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-title">1. Gegevens van uw onderneming</div>
     <div class="fields-grid">
@@ -170,7 +279,7 @@ select option{background:#1e293b;}
       <div class="field"><label>VCA-certificering</label>
         <select id="f-vca">
           <option value="">-- Selecteer --</option>
-          <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>Geen</option>
+          <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>VOL-VCA</option><option>Geen</option>
         </select>
       </div>
       <div class="field full"><label class="field-required">Adres onderneming</label><input type="text" id="f-adres" placeholder="Straat + nr, postcode + gemeente"></div>
@@ -243,19 +352,47 @@ select option{background:#1e293b;}
 
 <!-- ═══════════ STEP 4: VERSTUREN ═══════════ -->
 <div class="step-panel" id="step-4">
-  <div class="success-screen">
+  <div class="success-screen" id="success-screen-pre" style="padding:30px 20px 14px;">
+    <div class="success-icon" style="background:rgba(249,115,22,.15);border-color:#f97316;color:#f97316;">&#x2713;</div>
+    <div class="success-title">Klaar om te versturen</div>
+    <div class="success-txt">
+      Hoe wil je het ingevulde formulier doorsturen naar PowerYourself?<br>
+      <span style="color:#94a3b8;font-size:.82rem;">De PDF wordt eerst gedownload op je toestel.</span>
+    </div>
+  </div>
+
+  <div class="choice-grid" id="choice-grid">
+    <button class="choice-btn cb-whatsapp" onclick="submitViaWhatsApp()">
+      <div class="ch-icon">&#128172;</div>
+      <div class="ch-text">
+        <div class="ch-title">Versturen via WhatsApp</div>
+        <div class="ch-sub">Opent WhatsApp &mdash; voeg PDF toe in 1 tik</div>
+      </div>
+    </button>
+
+    <button class="choice-btn cb-mail" onclick="submitViaMail()">
+      <div class="ch-icon">&#9993;</div>
+      <div class="ch-text">
+        <div class="ch-title">Versturen per E-mail</div>
+        <div class="ch-sub">Opent e-mail-app &mdash; voeg PDF toe als bijlage</div>
+      </div>
+    </button>
+
+    <button class="choice-btn cb-back" onclick="showStep(3)">
+      <div class="ch-icon">&#8592;</div>
+      <div class="ch-text">
+        <div class="ch-title">Terug naar handtekening</div>
+        <div class="ch-sub">Iets vergeten in te vullen?</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Bevestigingsscherm na verzenden -->
+  <div class="success-screen" id="success-screen-post" style="display:none;">
     <div class="success-icon" id="success-icon">&#x2713;</div>
-    <div class="success-title" id="success-title">Klaar om te versturen</div>
-    <div class="success-txt" id="success-txt">
-      Je hebt alle stappen doorlopen. Klik hieronder om je formulier als PDF te downloaden en te versturen naar PowerYourself.
-    </div>
-    <div class="success-info" id="success-info">
-      <b>Wat gebeurt er nu?</b><br>
-      1. Het PDF wordt op je toestel gedownload<br>
-      2. Je e-mail-app opent automatisch<br>
-      3. <b>Voeg het PDF toe als bijlage</b> aan de e-mail<br>
-      4. Klik &laquo;Verzenden&raquo; in je e-mail-app
-    </div>
+    <div class="success-title" id="success-title">PDF gedownload!</div>
+    <div class="success-txt" id="success-txt">Voeg het PDF nu toe als bijlage aan het bericht.</div>
+    <div class="success-info" id="success-info"></div>
   </div>
 </div>
 
@@ -537,10 +674,11 @@ function showStep(n){
   var next = document.getElementById('btn-next');
   prev.style.display = n > 1 ? 'block' : 'none';
   if(n === 4){
-    next.className = 'fnav-btn fnav-submit';
-    next.textContent = 'PDF + E-mail versturen';
-    next.onclick = submitForm;
+    // Hide both nav buttons — choice is in the panel itself
+    next.style.display = 'none';
+    prev.style.display = 'none';
   } else {
+    next.style.display = '';
     next.className = 'fnav-btn fnav-next';
     next.textContent = 'Volgende →';
     next.onclick = nextStep;
@@ -768,16 +906,34 @@ function buildPdf(){
 // ════════════════════════════════════════════════════════════
 //  SUBMIT
 // ════════════════════════════════════════════════════════════
-function submitForm(){
+function _genAndDownloadPdf(){
+  var doc = buildPdf();
+  var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+  doc.save(fname);
+  return fname;
+}
+
+function _showSuccessPanel(via, fname){
+  document.getElementById('success-screen-pre').style.display = 'none';
+  document.getElementById('choice-grid').style.display = 'none';
+  document.getElementById('success-screen-post').style.display = 'block';
+  if(via === 'whatsapp'){
+    document.getElementById('success-title').textContent = 'PDF gedownload — voeg toe in WhatsApp';
+    document.getElementById('success-txt').innerHTML = 'WhatsApp opent nu. <b style="color:#4ade80;">Tik op het paperclip-icoontje (📎) en kies het zojuist gedownloade PDF-bestand</b> als bijlage. Druk dan op verzenden.';
+    document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Tip:</b> Het PDF staat in je Downloads-map. In WhatsApp: paperclip → Document → kies dit PDF.';
+  } else {
+    document.getElementById('success-title').textContent = 'PDF gedownload — voeg toe aan e-mail';
+    document.getElementById('success-txt').innerHTML = 'Je e-mail-app opent nu. <b style="color:#60a5fa;">Voeg het PDF toe als bijlage</b> en klik op verzenden.';
+    document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Tip:</b> Eerst PDF opzoeken in Downloads-map, dan koppelen aan de mail.';
+  }
+}
+
+function submitViaMail(){
   if(!validateStep(3)){ showStep(3); return; }
   showToast('PDF wordt aangemaakt...', '');
   setTimeout(function(){
     try{
-      var doc = buildPdf();
-      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
-      doc.save(fname);
-
-      // Open mailto with instructions
+      var fname = _genAndDownloadPdf();
       setTimeout(function(){
         var ourEmail = werfInfo.email || 'info@poweryourself.be';
         var subject = encodeURIComponent('VGM Aannemer-formulier - ' + (val('f-naam')||'') + ' - ' + (werfInfo.werf||''));
@@ -800,22 +956,50 @@ function submitForm(){
         );
         window.location.href = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
       }, 500);
-
-      // Show success screen
-      document.getElementById('success-icon').innerHTML = '&#x2713;';
-      document.getElementById('success-title').textContent = 'PDF gedownload — vergeet niet als bijlage toe te voegen!';
-      document.getElementById('success-txt').innerHTML = 'Je e-mail-app opent nu automatisch. <b style="color:#fb923c;">Voeg het zojuist gedownloade PDF-bestand toe als bijlage</b> en klik daarna op &laquo;Verzenden&raquo;.';
-      document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Bestaat uit 2 bijlagen?</b> Eerst de PDF zelf opzoeken op je toestel (Downloads-map), dan koppelen aan de mail.';
-      document.getElementById('btn-next').style.display = 'none';
-      document.getElementById('btn-prev').style.display = 'none';
-      showToast('Klaar! Voeg PDF nu toe als bijlage aan de mail', 'success');
-
+      _showSuccessPanel('mail', fname);
+      showToast('Voeg PDF toe als bijlage aan de mail', 'success');
     } catch(e){
       console.error(e);
       showToast('Fout bij PDF: ' + e.message, 'err');
     }
   }, 200);
 }
+
+function submitViaWhatsApp(){
+  if(!validateStep(3)){ showStep(3); return; }
+  showToast('PDF wordt aangemaakt...', '');
+  setTimeout(function(){
+    try{
+      var fname = _genAndDownloadPdf();
+      setTimeout(function(){
+        // PowerYourself WhatsApp number — Lucas Cuypers
+        var phone = '32476864138'; // internationaal formaat zonder + of 00
+        var msg = encodeURIComponent(
+          'VGM Aannemer-formulier — PowerYourself\n\n'+
+          '-- Werf --\n'+
+          'Werf: ' + (werfInfo.werf||'-') + '\n'+
+          'Adres: ' + (werfInfo.adres||'-') + '\n\n'+
+          '-- Onderneming --\n'+
+          'Naam: ' + val('f-naam') + '\n'+
+          'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n'+
+          'E-mail: ' + val('f-email') + '\n\n'+
+          'In bijlage vindt u het PDF (RI&E + Intentieverklaring).\n'+
+          'Bestandsnaam: ' + fname
+        );
+        // wa.me universele link werkt op desktop én mobile
+        window.location.href = 'https://wa.me/' + phone + '?text=' + msg;
+      }, 500);
+      _showSuccessPanel('whatsapp', fname);
+      showToast('WhatsApp geopend — voeg PDF toe als bijlage', 'success');
+    } catch(e){
+      console.error(e);
+      showToast('Fout bij PDF: ' + e.message, 'err');
+    }
+  }, 200);
+}
+
+// Backward compat — old name still works
+function submitForm(){ submitViaMail(); }
 
 // ════════════════════════════════════════════════════════════
 //  TOAST
@@ -827,6 +1011,12 @@ function showToast(msg, type){
   t.className = 'show ' + (type || '');
   clearTimeout(tT);
   tT = setTimeout(function(){ t.className = ''; }, 4000);
+}
+
+
+function toggleVgmInfo(){
+  var card = document.getElementById('vgm-info-card');
+  if(card) card.classList.toggle('open');
 }
 
 // ════════════════════════════════════════════════════════════
