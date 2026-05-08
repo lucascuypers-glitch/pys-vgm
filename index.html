@@ -574,6 +574,11 @@ select option{background:#1e293b;}
 .sa-btn-copy{background:rgba(59,130,246,.15);color:#93c5fd;border:1.5px solid rgba(59,130,246,.4);}
 .sa-btn-cancel{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
 
+
+/* WERF EDIT KNOP in topbar */
+.werf-edit-btn{padding:.35rem .55rem;background:rgba(59,130,246,.12);border:1.5px solid rgba(59,130,246,.4);border-radius:8px;color:#93c5fd;font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;}
+.werf-edit-btn:hover{background:rgba(59,130,246,.2);}
+
 </style>
 </head>
 <body>
@@ -602,7 +607,7 @@ select option{background:#1e293b;}
     <div class="nwm-title" id="nwm-title">Nieuwe werf aanmaken</div>
     <div class="nwm-grid">
       <div class="nwm-field full"><label>Werfnaam *</label><input type="text" id="nwm-naam" placeholder="bijv. Maasmechelen — Schoofs"></div>
-      <div class="nwm-field full"><label>Adres werf</label><input type="text" id="nwm-adres" placeholder="Straat + gemeente..."></div>
+      <div class="nwm-field full"><label>Adres werf *</label><input type="text" id="nwm-adres" placeholder="Straat + nr, postcode + gemeente"></div>
       <div class="nwm-field"><label>Klant / Opdrachtgever</label><input type="text" id="nwm-klant" placeholder="Naam klant..."></div>
       <div class="nwm-field"><label>Startdatum</label><input type="date" id="nwm-start"></div>
       <div class="nwm-field"><label>Werfleider</label><input type="text" id="nwm-leider" placeholder="Naam..."></div>
@@ -751,6 +756,7 @@ select option{background:#1e293b;}
   <div class="werf-topbar" id="werf-topbar">
     <button class="werf-back-btn" onclick="goToDashboard()">&#8592; Werven</button>
     <div class="werf-name-display" id="werf-name-display">Werf laden...</div>
+    <button class="werf-edit-btn" onclick="editCurrentWerf()" title="Werfgegevens bewerken">&#9998; Bewerk</button>
     <div class="werf-unsaved" id="werf-unsaved" style="display:none;">Niet opgeslagen</div>
   </div>
 
@@ -846,7 +852,7 @@ select option{background:#1e293b;}
         <div class="iv-field"><label>VCA-certificering</label>
           <select id="iv-vca" oninput="autoSave()">
             <option value="">-- Selecteer --</option>
-            <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>Geen</option>
+            <option>VCA*</option><option>VCA**</option><option>VCA-P</option><option>VOL-VCA</option><option>Geen</option>
           </select>
         </div>
         <div class="iv-field"><label>Naam preventieadviseur</label><input type="text" id="iv-pa" placeholder="Naam PA..." oninput="autoSave()"></div>
@@ -1848,9 +1854,21 @@ function closeNewWerfModal(){
   editingWerfId = null;
 }
 
+// Werf bewerken vanuit topbar
+function editCurrentWerf(){
+  if(currentWerfId){
+    openNewWerfModal(currentWerfId);
+  } else {
+    showToast('Geen werf geopend', '');
+  }
+}
+
+
 function saveNewWerf(){
   var naam = document.getElementById('nwm-naam').value.trim();
-  if(!naam){ showToast('Vul een werfnaam in',''); return; }
+  var adres = document.getElementById('nwm-adres').value.trim();
+  if(!naam){ showToast('Vul een werfnaam in',''); document.getElementById('nwm-naam').focus(); return; }
+  if(!adres){ showToast('Adres is verplicht — nodig voor navigatie en deel-link','err'); document.getElementById('nwm-adres').focus(); return; }
   var id = editingWerfId || genId();
   var now = new Date().toISOString();
   var werf = {
@@ -3915,13 +3933,18 @@ function closeShareAannemer(){
 }
 
 function buildShareLink(){
-  var werf  = (document.getElementById('iv-werf') ? document.getElementById('iv-werf').value : '') ||
+  // Primaire bron: werfMeta van currentWerfId (uit dashboard / nieuwe werf modal)
+  var w = (currentWerfId && werfMeta[currentWerfId]) ? werfMeta[currentWerfId] : null;
+
+  // Fallback: oude IV-velden
+  var werf  = (w && w.naam)  || (document.getElementById('iv-werf') ? document.getElementById('iv-werf').value : '') ||
               (document.getElementById('meta-werf') ? document.getElementById('meta-werf').value : '');
-  var adres = (document.getElementById('iv-werfadres') ? document.getElementById('iv-werfadres').value : '');
-  var klant = (document.getElementById('meta-klant') ? document.getElementById('meta-klant').value : '');
-  var start = (document.getElementById('iv-start') ? document.getElementById('iv-start').value : '');
+  var adres = (w && w.adres) || (document.getElementById('iv-werfadres') ? document.getElementById('iv-werfadres').value : '');
+  var klant = (w && w.klant) || (document.getElementById('meta-klant') ? document.getElementById('meta-klant').value : '');
+  var start = (w && w.start) || (document.getElementById('iv-start') ? document.getElementById('iv-start').value : '');
+
   var params = new URLSearchParams();
-  if(werf) params.set('werf', werf);
+  if(werf)  params.set('werf', werf);
   if(adres) params.set('adres', adres);
   if(klant) params.set('klant', klant);
   if(start) params.set('start', start);
