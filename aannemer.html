@@ -227,6 +227,65 @@ select option{background:#1e293b;}
 .nav-btn-inline.apple{background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.4);color:#cbd5e1;}
 .nav-btn-icon{width:14px;height:14px;display:inline-block;}
 
+
+/* AUTO-SAVE INDICATOR */
+.autosave-indicator{position:fixed;bottom:78px;right:14px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);border-radius:20px;padding:5px 10px;font-size:.7rem;color:#4ade80;font-family:'Barlow Condensed',sans-serif;font-weight:700;display:flex;align-items:center;gap:5px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:50;}
+.autosave-indicator.show{opacity:1;}
+.autosave-indicator.restored{background:rgba(249,115,22,.15);border-color:rgba(249,115,22,.4);color:#fb923c;}
+.autosave-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
+.autosave-indicator.restored .autosave-dot{background:#f97316;}
+
+/* GERESTOREERDE BANNER */
+.restore-banner{margin:10px 14px;background:rgba(249,115,22,.1);border:1.5px solid rgba(249,115,22,.4);border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:.82rem;color:#fb923c;}
+.restore-banner-info{flex:1;line-height:1.4;}
+.restore-banner-info b{color:#f1f5f9;}
+.restore-banner-clear{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.4);border-radius:7px;color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;padding:5px 10px;cursor:pointer;}
+
+/* VERPLICHTE VELDEN — ROOD */
+.field input.invalid, .field select.invalid, .field textarea.invalid{border-color:#ef4444 !important;background:rgba(239,68,68,.05);}
+.field-error-msg{color:#f87171;font-size:.72rem;margin-top:3px;font-weight:600;display:none;}
+.field-error-msg.show{display:block;}
+.validation-banner{position:sticky;top:60px;z-index:98;background:#dc2626;color:#fff;padding:10px 14px;font-size:.85rem;font-weight:600;display:none;align-items:center;gap:8px;animation:slideDown .3s;}
+.validation-banner.show{display:flex;}
+@keyframes slideDown{from{transform:translateY(-100%);}to{transform:translateY(0);}}
+
+/* RI&E SNELLE SELECTIE — fase 1 */
+.rie-mode-tabs{display:flex;gap:4px;margin:0 14px 10px;background:#0a1628;padding:4px;border-radius:10px;border:1px solid #1a3560;}
+.rie-mode-tab{flex:1;padding:8px;text-align:center;border-radius:7px;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;color:#94a3b8;cursor:pointer;border:none;background:transparent;}
+.rie-mode-tab.active{background:#3b82f6;color:#fff;}
+.rie-quick-list{padding:0 14px;}
+.rie-quick-card{background:#1e293b;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1.5px solid #1a3560;transition:border-color .15s, background .15s;}
+.rie-quick-card.active{border-color:#3b82f6;background:rgba(59,130,246,.08);}
+.rie-quick-checkbox{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#0a1628;border:2px solid #334155;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.85rem;}
+.rie-quick-card.active .rie-quick-checkbox{background:#3b82f6;border-color:#3b82f6;}
+.rie-quick-info{flex:1;min-width:0;}
+.rie-quick-naam{font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;color:#f1f5f9;}
+.rie-quick-omschr{font-size:.72rem;color:#94a3b8;margin-top:1px;line-height:1.3;}
+.rie-quick-summary{margin:10px 14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:8px 12px;font-size:.78rem;color:#93c5fd;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;}
+
+/* BIJLAGEN UPLOAD */
+.bijlage-section{margin:10px 14px;background:#1e293b;border-radius:12px;padding:12px 14px;border-left:3px solid #22c55e;}
+.bijlage-title{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:#4ade80;margin-bottom:6px;}
+.bijlage-sub{font-size:.74rem;color:#94a3b8;margin-bottom:10px;line-height:1.4;}
+.bijlage-upload-row{display:flex;flex-direction:column;gap:8px;}
+.bijlage-upload-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:#0a1628;border:1.5px dashed #334155;border-radius:9px;cursor:pointer;color:#cbd5e1;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;}
+.bijlage-upload-btn:hover{border-color:#22c55e;color:#4ade80;}
+.bijlage-upload-btn.has-file{border-style:solid;border-color:#22c55e;background:rgba(34,197,94,.08);color:#4ade80;}
+.bijlage-fname{flex:1;text-align:left;font-size:.78rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bijlage-clear{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:5px;padding:3px 8px;font-size:.7rem;color:#f87171;cursor:pointer;font-weight:700;}
+
+/* PDF PREVIEW MODAL */
+#pdf-preview-modal{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.95);display:none;flex-direction:column;}
+#pdf-preview-modal.open{display:flex;}
+.pdfp-header{padding:10px 14px;background:#112244;border-bottom:1px solid #1a3560;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pdfp-title{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;color:#f97316;}
+.pdfp-close-btn{padding:5px 10px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:7px;color:#f87171;font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;}
+.pdfp-body{flex:1;background:#0a1628;overflow:hidden;}
+.pdfp-iframe{width:100%;height:100%;border:none;background:#fff;}
+.pdfp-footer{padding:10px 14px;background:#112244;border-top:1px solid #1a3560;display:flex;gap:8px;}
+.pdfp-edit{flex:1;padding:11px;background:#1e293b;color:#94a3b8;border:1.5px solid #334155;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;cursor:pointer;}
+.pdfp-confirm{flex:2;padding:11px;background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(34,197,94,.3);}
+
 </style>
 </head>
 <body>
@@ -245,6 +304,8 @@ select option{background:#1e293b;}
   <div class="fp-label" id="fp-label">Stap 1/4</div>
 </div>
 
+<div class="validation-banner" id="validation-banner"><span>&#9888;</span><span id="validation-msg">Vul de gemarkeerde velden in</span></div>
+
 <!-- ═══════════ STEP 1: WELCOME + GEGEVENS ═══════════ -->
 <div class="step-panel active" id="step-1">
   <div class="welcome">
@@ -254,6 +315,8 @@ select option{background:#1e293b;}
       <b>Werf laden...</b>
     </div>
   </div>
+
+<div class="restore-banner" id="restore-banner" style="display:none;"><span style="font-size:1.2rem;">&#128229;</span><div class="restore-banner-info"><b>Vorige sessie hervat</b><br><span style="font-size:.72rem;">Je vorige antwoorden zijn teruggehaald.</span></div><button class="restore-banner-clear" onclick="clearSavedSession()">Wissen</button></div>
 
 
   <div class="section">
@@ -288,15 +351,47 @@ select option{background:#1e293b;}
       </div>
     </div>
   </div>
+
+  <!-- BIJLAGEN UPLOAD (optioneel) -->
+  <div class="bijlage-section">
+    <div class="bijlage-title">&#128206; Bijlagen (optioneel)</div>
+    <div class="bijlage-sub">Voeg eventueel je VCA-attest of verzekeringsbewijs toe. Worden meegestuurd in het PDF.</div>
+    <div class="bijlage-upload-row">
+      <label class="bijlage-upload-btn" id="bij-vca-label" for="bij-vca-input">
+        <span>&#128272; VCA-attest <span style="color:#64748b;">(optioneel)</span></span>
+        <span class="bijlage-fname" id="bij-vca-fname"></span>
+      </label>
+      <input type="file" id="bij-vca-input" accept="image/*,application/pdf" style="display:none;" onchange="handleBijlage('vca',this)">
+
+      <label class="bijlage-upload-btn" id="bij-verz-label" for="bij-verz-input">
+        <span>&#128737; Verzekering <span style="color:#64748b;">(optioneel)</span></span>
+        <span class="bijlage-fname" id="bij-verz-fname"></span>
+      </label>
+      <input type="file" id="bij-verz-input" accept="image/*,application/pdf" style="display:none;" onchange="handleBijlage('verz',this)">
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════ STEP 2: RI&E ═══════════ -->
 <div class="step-panel" id="step-2">
   <div class="section" style="border-left-color:#3b82f6;">
     <div class="section-title" style="color:#60a5fa;">3. Risicoanalyse (RI&E)</div>
-    <div class="section-sub">Activeer de gevaren die op deze werf van toepassing zijn voor jouw activiteiten. Pas eventueel de scores aan en vink maatregelen aan die je toepast.<br><br><b style="color:#fb923c;">Tip:</b> Kinney-methode &mdash; R = W (kans) x B (blootstelling) x E (ernst)</div>
+    <div class="section-sub" id="rie-section-sub">Selecteer de gevaren die op deze werf van toepassing zijn voor jouw activiteiten. Daarna pas je per gevaar de details aan.</div>
   </div>
-  <div id="rie-container"></div>
+
+  <!-- MODE TABS: Snelle selectie / Detail invullen -->
+  <div class="rie-mode-tabs">
+    <button class="rie-mode-tab active" id="rie-tab-quick" onclick="setRieMode('quick')">1. Selecteer gevaren</button>
+    <button class="rie-mode-tab" id="rie-tab-detail" onclick="setRieMode('detail')">2. Details invullen</button>
+  </div>
+
+  <!-- QUICK selection list -->
+  <div class="rie-quick-list" id="rie-quick-list"></div>
+  <div class="rie-quick-summary" id="rie-quick-summary" style="display:none;"></div>
+
+  <!-- DETAIL list (oud component) -->
+  <div id="rie-container" style="display:none;"></div>
+
   <button class="add-eigen-btn" onclick="openAddModal()">+ Eigen gevaar toevoegen</button>
 </div>
 
@@ -468,6 +563,28 @@ select option{background:#1e293b;}
   <button class="fnav-btn fnav-next" id="btn-next" onclick="nextStep()">Volgende &rarr;</button>
 </div>
 
+
+<!-- AUTOSAVE INDICATOR -->
+<div class="autosave-indicator" id="autosave-indicator">
+  <span class="autosave-dot"></span>
+  <span id="autosave-text">Opgeslagen</span>
+</div>
+
+<!-- PDF PREVIEW MODAL -->
+<div id="pdf-preview-modal">
+  <div class="pdfp-header">
+    <span class="pdfp-title">Voorvertoning PDF</span>
+    <button class="pdfp-close-btn" onclick="closePdfPreview()">Sluiten</button>
+  </div>
+  <div class="pdfp-body">
+    <iframe class="pdfp-iframe" id="pdfp-iframe"></iframe>
+  </div>
+  <div class="pdfp-footer">
+    <button class="pdfp-edit" onclick="closePdfPreview()">&larr; Aanpassen</button>
+    <button class="pdfp-confirm" id="pdfp-confirm-btn">Versturen &#8594;</button>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -569,7 +686,21 @@ function buildRIE(){
   var c = document.getElementById('rie-container');
   c.innerHTML = '';
   var all = RIE_DATA.concat(customGevaren);
-  all.forEach(function(g){
+  // In detail-mode toon alleen geactiveerde gevaren — anders alles
+  var filtered = all.filter(function(g){
+    if(rieMode === 'detail'){
+      var gs = rieGevaren[g.id];
+      return gs && gs.active;
+    }
+    return true;
+  });
+  if(rieMode === 'detail' && filtered.length === 0){
+    c.innerHTML = '<div style="text-align:center;padding:24px 14px;color:#94a3b8;font-size:.82rem;">'
+      + 'Nog geen gevaren geselecteerd.<br>Ga terug naar <b style="color:#60a5fa;">1. Selecteer gevaren</b>.'
+      + '</div>';
+    return;
+  }
+  filtered.forEach(function(g){
     c.appendChild(buildGevaarCard(g));
   });
 }
@@ -642,11 +773,13 @@ function toggleGevaar(id, active){
   rieGevaren[id].active = active;
   var card = document.getElementById('gc-' + id);
   if(card) card.classList.toggle('active', active);
+  autoSave();
 }
 
 function updateScore(id, field, val){
   initGS(id);
   rieGevaren[id][field] = val;
+  autoSave();
   var R = calcR(rieGevaren[id].w, rieGevaren[id].b, rieGevaren[id].e);
   var si = scoreInfo(R);
   var sv = document.getElementById('sv-' + id);
@@ -660,6 +793,7 @@ function toggleMaat(id, m, el){
   if(idx > -1) list.splice(idx, 1);
   else list.push(m);
   el.classList.toggle('sel', list.indexOf(m) > -1);
+  autoSave();
 }
 
 // CUSTOM GEVAAR
@@ -682,6 +816,8 @@ function saveCustomGevaar(){
   document.getElementById('am-maatregel').value = '';
   closeAddModal();
   buildRIE();
+  if(rieMode==='quick') buildQuickList();
+  autoSave();
   showToast('Gevaar toegevoegd', 'success');
 }
 
@@ -708,7 +844,7 @@ function initSignature(){
   }
   function start(e){ e.preventDefault(); var p = getPos(e); sigDrawing = true; sigCtx.beginPath(); sigCtx.moveTo(p[0], p[1]); }
   function move(e){ e.preventDefault(); if(!sigDrawing) return; var p = getPos(e); sigCtx.lineTo(p[0], p[1]); sigCtx.strokeStyle = '#f97316'; sigCtx.lineWidth = 2.5; sigCtx.lineCap = 'round'; sigCtx.stroke(); }
-  function end(e){ e.preventDefault(); if(sigDrawing){ sigDrawing = false; sigData = sigCanvas.toDataURL('image/png'); markSigned(); } }
+  function end(e){ e.preventDefault(); if(sigDrawing){ sigDrawing = false; sigData = sigCanvas.toDataURL('image/png'); markSigned(); autoSave(); } }
   sigCanvas.addEventListener('touchstart', start, {passive:false});
   sigCanvas.addEventListener('touchmove', move, {passive:false});
   sigCanvas.addEventListener('touchend', end, {passive:false});
@@ -725,6 +861,7 @@ function clearSig(){
   document.getElementById('sig-status').className = 'sig-status empty';
   document.getElementById('sig-status').textContent = 'Nog niet ondertekend';
   sigCanvas.classList.remove('signed');
+  autoSave();
 }
 
 function markSigned(){
@@ -773,24 +910,47 @@ function nextStep(){
 function prevStep(){ if(currentStep > 1) showStep(currentStep - 1); }
 
 function validateStep(n){
+  clearAllInvalids();
   var missing = [];
+  var firstInvalidEl = null;
+
+  function checkField(id, label){
+    if(!val(id)){
+      missing.push(label);
+      markFieldInvalid(id, 'Verplicht');
+      if(!firstInvalidEl) firstInvalidEl = document.getElementById(id);
+    }
+  }
+
   if(n === 1){
-    if(!val('f-naam')) missing.push('Naam onderneming');
-    if(!val('f-adres')) missing.push('Adres onderneming');
-    if(!val('f-email')) missing.push('E-mailadres');
-    if(!val('f-vw-naam')) missing.push('Naam werfverantwoordelijke');
+    checkField('f-naam', 'Naam onderneming');
+    checkField('f-adres', 'Adres onderneming');
+    checkField('f-email', 'E-mailadres');
+    checkField('f-vw-naam', 'Naam werfverantwoordelijke');
   } else if(n === 2){
     var anyActive = Object.values(rieGevaren).some(function(g){ return g.active; });
     if(!anyActive){
-      showToast('Activeer minstens 1 gevaar voor jouw werkzaamheden', 'err');
+      showValidationBanner('Selecteer minstens 1 gevaar in stap 1');
+      showToast('Selecteer minstens 1 gevaar', 'err');
+      // Switch to quick mode if not already
+      if(rieMode !== 'quick') setRieMode('quick');
       return false;
     }
   } else if(n === 3){
     if(!sigData){ missing.push('Handtekening'); }
-    if(!val('f-datum')) missing.push('Datum');
+    if(!val('f-datum')){
+      missing.push('Datum');
+      markFieldInvalid('f-datum', 'Verplicht');
+      if(!firstInvalidEl) firstInvalidEl = document.getElementById('f-datum');
+    }
   }
   if(missing.length){
+    showValidationBanner('Vul in: ' + missing.join(', '));
     showToast('Vul nog in: ' + missing.join(', '), 'err');
+    if(firstInvalidEl){
+      firstInvalidEl.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ firstInvalidEl.focus(); }, 400);
+    }
     return false;
   }
   return true;
@@ -967,6 +1127,48 @@ function buildPdf(){
   }
   y += 65;
 
+  // ── BIJLAGEN als extra pagina's
+  ['vca','verz'].forEach(function(type){
+    var b = bijlagen[type];
+    if(!b) return;
+    doc.addPage();
+    var ph = doc.internal.pageSize.getHeight();
+    var pw = doc.internal.pageSize.getWidth();
+    doc.setFillColor(249, 115, 22); doc.rect(0, 0, pw, 3, 'F');
+    doc.setFillColor(10, 22, 40); doc.rect(0, 3, pw, 18, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+    doc.text(type === 'vca' ? 'Bijlage: VCA-attest' : 'Bijlage: Verzekeringsbewijs', 14, 14);
+    doc.setTextColor(170,170,170); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    doc.text((b.name||'').substring(0,80), 14, 19);
+
+    // Image attachment
+    if(b.type && b.type.indexOf('image/') === 0){
+      try{
+        var imgFmt = b.type.indexOf('png') > -1 ? 'PNG' : 'JPEG';
+        var maxW = pw - 28;
+        var maxH = ph - 35;
+        // Get natural size via Image
+        var img = new Image();
+        img.src = b.data;
+        var w = img.width || 800;
+        var h = img.height || 600;
+        var ratio = Math.min(maxW/w, maxH/h);
+        var fw = w * ratio;
+        var fh = h * ratio;
+        doc.addImage(b.data, imgFmt, 14, 28, fw, fh);
+      }catch(e){
+        doc.setTextColor(120,120,120); doc.setFontSize(9);
+        doc.text('Bijlage kon niet worden ingesloten — neem rechtstreeks contact op.', 14, 40);
+      }
+    } else {
+      // PDF or other — show placeholder text
+      doc.setTextColor(60, 60, 60); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+      doc.text('PDF bestand: ' + (b.name||'-'), 14, 32);
+      doc.setTextColor(120, 120, 120); doc.setFontSize(8);
+      doc.text('Originele PDF wordt apart bijgevoegd door de aannemer.', 14, 38);
+    }
+  });
+
   // Footer
   var tp = doc.internal.getNumberOfPages();
   for(var p = 1; p <= tp; p++){
@@ -1089,13 +1291,16 @@ function resetSuccessFlow(){
 
 function submitViaMail(){
   if(!validateStep(3)){ showStep(3); return; }
-  showToast('PDF wordt aangemaakt...', '');
-  setTimeout(function(){
-    try{
-      // Genereer PDF + bewaar voor opnieuw downloaden
-      var pdfDoc = buildPdf();
-      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
-      pdfDoc.save(fname);
+  // Toon eerst preview, dan pas verzenden
+  showPdfPreview(function(pdfDoc){
+    _doSubmitMail(pdfDoc);
+  });
+}
+
+function _doSubmitMail(pdfDoc){
+  try{
+    var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+    pdfDoc.save(fname);
 
       // Bouw mailto-URL
       var ourEmail = werfInfo.email || 'info@poweryourself.be';
@@ -1116,25 +1321,27 @@ function submitViaMail(){
         'Met vriendelijke groeten,\n'+
         val('f-vw-naam') + '\n' + val('f-naam')
       );
-      var mailUrl = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
-
-      // Toon eerst het instructie-scherm met countdown — pas daarna mail openen
-      _showSuccessPanel('mail', fname, pdfDoc, mailUrl);
-    } catch(e){
-      console.error(e);
-      showToast('Fout bij PDF: ' + e.message, 'err');
-    }
-  }, 200);
+    var mailUrl = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
+    _showSuccessPanel('mail', fname, pdfDoc, mailUrl);
+    // Clear saved session — succesvol verzonden
+    try{ localStorage.removeItem(getSaveKey()); }catch(e){}
+  } catch(e){
+    console.error(e);
+    showToast('Fout bij PDF: ' + e.message, 'err');
+  }
 }
 
 function submitViaWhatsApp(){
   if(!validateStep(3)){ showStep(3); return; }
-  showToast('PDF wordt aangemaakt...', '');
-  setTimeout(function(){
-    try{
-      var pdfDoc = buildPdf();
-      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
-      pdfDoc.save(fname);
+  showPdfPreview(function(pdfDoc){
+    _doSubmitWhatsApp(pdfDoc);
+  });
+}
+
+function _doSubmitWhatsApp(pdfDoc){
+  try{
+    var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+    pdfDoc.save(fname);
 
       var phone = '32476864138';
       var msg = encodeURIComponent(
@@ -1149,14 +1356,13 @@ function submitViaWhatsApp(){
         'In bijlage vindt u het PDF (RI&E + Intentieverklaring).\n'+
         'Bestandsnaam: ' + fname
       );
-      var waUrl = 'https://wa.me/' + phone + '?text=' + msg;
-
-      _showSuccessPanel('whatsapp', fname, pdfDoc, waUrl);
-    } catch(e){
-      console.error(e);
-      showToast('Fout bij PDF: ' + e.message, 'err');
-    }
-  }, 200);
+    var waUrl = 'https://wa.me/' + phone + '?text=' + msg;
+    _showSuccessPanel('whatsapp', fname, pdfDoc, waUrl);
+    try{ localStorage.removeItem(getSaveKey()); }catch(e){}
+  } catch(e){
+    console.error(e);
+    showToast('Fout bij PDF: ' + e.message, 'err');
+  }
 }
 
 // Backward compat — old name still works
@@ -1180,16 +1386,313 @@ function toggleVgmInfo(){
   if(card) card.classList.toggle('open');
 }
 
+
+// ════════════════════════════════════════════════════════════════════
+//  AUTO-SAVE — feature 1
+// ════════════════════════════════════════════════════════════════════
+var SAVE_KEY_PREFIX = 'pys_aannemer_save_';
+var saveTimer = null;
+var saveKey = null;
+
+function getSaveKey(){
+  if(saveKey) return saveKey;
+  var p = new URLSearchParams(window.location.search);
+  // Use werf+adres as unique key (or 'default' if no params)
+  saveKey = SAVE_KEY_PREFIX + (p.get('werf') || 'default').replace(/[^a-zA-Z0-9]/g,'_');
+  return saveKey;
+}
+
+function autoSave(){
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    try{
+      var snapshot = {
+        version: 1,
+        savedAt: Date.now(),
+        fields: {},
+        rieGevaren: rieGevaren,
+        customGevaren: customGevaren,
+        sigData: sigData,
+        currentStep: currentStep,
+        bijlagen: {
+          vca: bijlagen.vca ? {name: bijlagen.vca.name, type: bijlagen.vca.type, data: bijlagen.vca.data} : null,
+          verz: bijlagen.verz ? {name: bijlagen.verz.name, type: bijlagen.verz.type, data: bijlagen.verz.data} : null
+        }
+      };
+      // Save all input/select/textarea values
+      ['f-naam','f-btw','f-vca','f-adres','f-tel','f-email','f-vw-naam','f-vw-func',
+       'f-vw-gsm','f-vw-vca','f-personen','f-basis-vca','f-datum','f-plaats'].forEach(function(id){
+        var el = document.getElementById(id);
+        if(el) snapshot.fields[id] = el.value;
+      });
+      localStorage.setItem(getSaveKey(), JSON.stringify(snapshot));
+      showAutosaveIndicator('saved');
+    }catch(e){ console.error('autosave fail', e); }
+  }, 2000); // debounce 2s
+}
+
+function restoreSession(){
+  try{
+    var raw = localStorage.getItem(getSaveKey());
+    if(!raw) return false;
+    var s = JSON.parse(raw);
+    // 7 day expiry
+    if(Date.now() - s.savedAt > 7*24*60*60*1000){
+      localStorage.removeItem(getSaveKey());
+      return false;
+    }
+    // Restore fields
+    Object.keys(s.fields||{}).forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.value = s.fields[id];
+    });
+    rieGevaren = s.rieGevaren || {};
+    customGevaren = s.customGevaren || [];
+    sigData = s.sigData || '';
+    bijlagen = s.bijlagen || {vca:null, verz:null};
+    if(bijlagen.vca) updateBijlageBtn('vca', bijlagen.vca.name);
+    if(bijlagen.verz) updateBijlageBtn('verz', bijlagen.verz.name);
+    return true;
+  }catch(e){ return false; }
+}
+
+function clearSavedSession(){
+  if(!confirm('Vorige sessie wissen en opnieuw beginnen?')) return;
+  localStorage.removeItem(getSaveKey());
+  location.reload();
+}
+
+function showAutosaveIndicator(type){
+  var ind = document.getElementById('autosave-indicator');
+  var txt = document.getElementById('autosave-text');
+  if(!ind) return;
+  ind.className = 'autosave-indicator show' + (type==='restored' ? ' restored' : '');
+  txt.textContent = type==='restored' ? 'Vorige sessie hersteld' : 'Opgeslagen';
+  setTimeout(function(){ ind.classList.remove('show'); }, 2000);
+}
+
+// Hook autosave to all fields
+function attachAutoSave(){
+  document.querySelectorAll('input, select, textarea').forEach(function(el){
+    if(el.id && (el.id.startsWith('f-') || el.id.startsWith('am-'))){
+      el.addEventListener('input', autoSave);
+      el.addEventListener('change', autoSave);
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  VERPLICHTE VELDEN VISUEEL — feature 3
+// ════════════════════════════════════════════════════════════════════
+function markFieldInvalid(id, errorMsg){
+  var el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add('invalid');
+  // Add error msg below
+  var existing = el.parentNode.querySelector('.field-error-msg');
+  if(!existing){
+    var msg = document.createElement('div');
+    msg.className = 'field-error-msg show';
+    msg.textContent = errorMsg || 'Verplicht veld';
+    el.parentNode.appendChild(msg);
+  }
+  // Remove on input
+  if(!el._invalidHandlerAttached){
+    el._invalidHandlerAttached = true;
+    var clearFn = function(){
+      el.classList.remove('invalid');
+      var m = el.parentNode.querySelector('.field-error-msg');
+      if(m) m.classList.remove('show');
+    };
+    el.addEventListener('input', clearFn);
+    el.addEventListener('change', clearFn);
+  }
+}
+
+function clearAllInvalids(){
+  document.querySelectorAll('.invalid').forEach(function(el){ el.classList.remove('invalid'); });
+  document.querySelectorAll('.field-error-msg').forEach(function(m){ m.classList.remove('show'); });
+}
+
+function showValidationBanner(msg){
+  var b = document.getElementById('validation-banner');
+  var m = document.getElementById('validation-msg');
+  if(b && m){
+    m.textContent = msg;
+    b.classList.add('show');
+    setTimeout(function(){ b.classList.remove('show'); }, 5000);
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  RIE QUICK MODE — feature 5
+// ════════════════════════════════════════════════════════════════════
+var rieMode = 'quick';
+
+function setRieMode(mode){
+  rieMode = mode;
+  document.getElementById('rie-tab-quick').classList.toggle('active', mode==='quick');
+  document.getElementById('rie-tab-detail').classList.toggle('active', mode==='detail');
+  document.getElementById('rie-quick-list').style.display    = mode==='quick' ? 'block' : 'none';
+  document.getElementById('rie-quick-summary').style.display = mode==='quick' ? 'block' : 'none';
+  document.getElementById('rie-container').style.display     = mode==='detail' ? 'block' : 'none';
+  // Update sub
+  var sub = document.getElementById('rie-section-sub');
+  if(sub){
+    if(mode==='quick'){
+      sub.innerHTML = '<b style="color:#60a5fa;">Stap 1:</b> Vink alle gevaren aan die op deze werf van toepassing zijn voor jouw activiteiten.';
+    } else {
+      sub.innerHTML = '<b style="color:#fb923c;">Stap 2:</b> Pas per gevaar de Kinney-score aan en vink de maatregelen aan die je toepast.<br><span style="font-size:.7rem;">R = W (kans) x B (blootstelling) x E (ernst)</span>';
+      buildRIE(); // rebuild detail with only active gevaren
+    }
+  }
+  if(mode==='detail') buildRIE();
+  if(mode==='quick') buildQuickList();
+  window.scrollTo(0, document.getElementById('rie-quick-list').offsetTop - 100);
+}
+
+function buildQuickList(){
+  var c = document.getElementById('rie-quick-list');
+  if(!c) return;
+  c.innerHTML = '';
+  var all = RIE_DATA.concat(customGevaren);
+  all.forEach(function(g){
+    initGS(g.id);
+    var active = rieGevaren[g.id].active;
+    var div = document.createElement('div');
+    div.className = 'rie-quick-card' + (active?' active':'');
+    div.onclick = function(){
+      rieGevaren[g.id].active = !rieGevaren[g.id].active;
+      autoSave();
+      buildQuickList();
+    };
+    div.innerHTML =
+      '<div class="rie-quick-checkbox">' + (active?'&#10003;':'') + '</div>' +
+      '<div class="rie-quick-info">' +
+        '<div class="rie-quick-naam">' + escHtml(g.naam) + '</div>' +
+        '<div class="rie-quick-omschr">' + escHtml(g.omschr) + '</div>' +
+      '</div>';
+    c.appendChild(div);
+  });
+  // Summary
+  var actCount = Object.values(rieGevaren).filter(function(g){ return g.active; }).length;
+  var sum = document.getElementById('rie-quick-summary');
+  if(sum){
+    if(actCount > 0){
+      sum.style.display = 'block';
+      sum.innerHTML = actCount + ' gevaar' + (actCount>1?'en':'') + ' geselecteerd &mdash; ga verder naar <b>2. Details invullen</b> (optioneel)';
+    } else {
+      sum.style.display = 'block';
+      sum.innerHTML = '<span style="color:#fde047;">Selecteer minstens 1 gevaar.</span>';
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  BIJLAGEN UPLOAD — feature 4
+// ════════════════════════════════════════════════════════════════════
+var bijlagen = {vca: null, verz: null};
+
+function handleBijlage(type, input){
+  var file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){
+    showToast('Bestand te groot (max 5 MB)', 'err');
+    input.value = '';
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    bijlagen[type] = {
+      name: file.name,
+      type: file.type,
+      data: ev.target.result
+    };
+    updateBijlageBtn(type, file.name);
+    autoSave();
+    showToast('Bijlage toegevoegd', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearBijlage(type, ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  bijlagen[type] = null;
+  updateBijlageBtn(type, '');
+  document.getElementById('bij-' + type + '-input').value = '';
+  autoSave();
+}
+
+function updateBijlageBtn(type, fname){
+  var label = document.getElementById('bij-' + type + '-label');
+  var nameEl = document.getElementById('bij-' + type + '-fname');
+  if(!label) return;
+  if(fname){
+    label.classList.add('has-file');
+    nameEl.innerHTML = '&#10003; ' + escHtml(fname.length>22?fname.substring(0,22)+'...':fname) +
+      ' <button class="bijlage-clear" onclick="clearBijlage(\'' + type + '\',event)">&#215;</button>';
+  } else {
+    label.classList.remove('has-file');
+    nameEl.textContent = '';
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  PDF PREVIEW — feature 2
+// ════════════════════════════════════════════════════════════════════
+var _previewSubmitFn = null;
+
+function showPdfPreview(submitCallback){
+  if(!validateStep(3)){ showStep(3); return; }
+  showToast('PDF wordt gegenereerd...', '');
+  setTimeout(function(){
+    try{
+      var doc = buildPdf();
+      var blob = doc.output('blob');
+      var url = URL.createObjectURL(blob);
+      document.getElementById('pdfp-iframe').src = url;
+      _previewSubmitFn = function(){
+        URL.revokeObjectURL(url);
+        closePdfPreview();
+        submitCallback(doc);
+      };
+      document.getElementById('pdfp-confirm-btn').onclick = _previewSubmitFn;
+      document.getElementById('pdf-preview-modal').classList.add('open');
+    }catch(e){
+      console.error(e);
+      showToast('Fout bij PDF-voorvertoning', 'err');
+    }
+  }, 200);
+}
+
+function closePdfPreview(){
+  document.getElementById('pdf-preview-modal').classList.remove('open');
+}
+
+
 // ════════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════════
 loadFromUrl();
+
+// Probeer vorige sessie te herstellen
+var restored = restoreSession();
+if(restored){
+  document.getElementById('restore-banner').style.display = 'flex';
+  setTimeout(function(){ showAutosaveIndicator('restored'); }, 500);
+}
+
 buildRIE();
-showStep(1);
-// Pre-fill date
+buildQuickList();
+showStep(restored && currentStep ? currentStep : 1);
+
+// Pre-fill date if not restored
 var today = new Date().toISOString().split('T')[0];
 var dateField = document.getElementById('f-datum');
-if(dateField) dateField.value = today;
+if(dateField && !dateField.value) dateField.value = today;
+
+// Hook autosave
+attachAutoSave();
 
 </script>
 </body>
