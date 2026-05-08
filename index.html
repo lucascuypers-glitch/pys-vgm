@@ -3951,6 +3951,7 @@ function buildShareLink(){
   params.set('contact', 'PowerYourself - Stijn Dillen / Lucas Cuypers');
   params.set('email', 'info@poweryourself.be');
   params.set('type', 'beide');
+  params.set('v', Date.now()); // cache-buster
   var url = AANNEMER_PAGE_URL + '?' + params.toString();
   var preview = document.getElementById('sa-link-preview');
   if(preview) preview.textContent = url;
