@@ -674,10 +674,20 @@ function loadFromUrl(){
   } else {
     html += '<br><b style="color:#94a3b8;">Contact:</b> ' + escHtml(werfInfo.contact) + ' &mdash; ' + escHtml(werfInfo.email);
   }
-  document.getElementById('welcome-werf').innerHTML = html;
+  var ww = document.getElementById('welcome-werf');
+  if(ww) ww.innerHTML = html;
 }
 
 function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Veilige helpers — voorkomen "Cannot set properties of null"
+function safeSet(id, prop, value){
+  var el = document.getElementById(id);
+  if(el) el[prop] = value;
+}
+function safeText(id, value){ safeSet(id, 'textContent', value); }
+function safeHtml(id, value){ safeSet(id, 'innerHTML', value); }
+
 
 // ════════════════════════════════════════════════════════════
 //  RI&E
@@ -858,15 +868,15 @@ function clearSig(){
   sigCtx.fillStyle = '#0a1628';
   sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
   sigData = '';
-  document.getElementById('sig-status').className = 'sig-status empty';
-  document.getElementById('sig-status').textContent = 'Nog niet ondertekend';
+  var ss1 = document.getElementById('sig-status');
+  if(ss1){ ss1.className = 'sig-status empty'; ss1.textContent = 'Nog niet ondertekend'; }
   sigCanvas.classList.remove('signed');
   autoSave();
 }
 
 function markSigned(){
-  document.getElementById('sig-status').className = 'sig-status done';
-  document.getElementById('sig-status').textContent = 'Ondertekend';
+  var ss2 = document.getElementById('sig-status');
+  if(ss2){ ss2.className = 'sig-status done'; ss2.textContent = 'Ondertekend'; }
   sigCanvas.classList.add('signed');
 }
 
@@ -878,20 +888,22 @@ function showStep(n){
   for(var i = 1; i <= 4; i++){
     document.getElementById('step-' + i).classList.toggle('active', i === n);
     var fps = document.getElementById('fps-' + i);
-    fps.classList.remove('active', 'done');
-    if(i < n) fps.classList.add('done');
-    else if(i === n) fps.classList.add('active');
+    if(fps){
+      fps.classList.remove('active', 'done');
+      if(i < n) fps.classList.add('done');
+      else if(i === n) fps.classList.add('active');
+    }
   }
-  document.getElementById('fp-label').textContent = 'Stap ' + n + '/4';
+  var fpl = document.getElementById('fp-label');
+  if(fpl) fpl.textContent = 'Stap ' + n + '/4';
   // Buttons
   var prev = document.getElementById('btn-prev');
   var next = document.getElementById('btn-next');
-  prev.style.display = n > 1 ? 'block' : 'none';
+  if(prev) prev.style.display = n > 1 ? 'block' : 'none';
   if(n === 4){
-    // Hide both nav buttons — choice is in the panel itself
-    next.style.display = 'none';
-    prev.style.display = 'none';
-  } else {
+    if(next) next.style.display = 'none';
+    if(prev) prev.style.display = 'none';
+  } else if(next) {
     next.style.display = '';
     next.className = 'fnav-btn fnav-next';
     next.textContent = 'Volgende →';
@@ -1210,27 +1222,26 @@ function _showSuccessPanel(via, fname, doc, targetUrl){
   document.getElementById('success-screen-post').style.display = 'block';
 
   // PDF-naam invullen
-  document.getElementById('instr-pdf-name').textContent = fname;
-
+  safeText('instr-pdf-name', fname);
   // Banner + stappen aanpassen per kanaal
   var appName = via === 'whatsapp' ? 'WhatsApp' : 'je e-mail-app';
-  document.getElementById('instr-app-name').textContent = appName;
-  document.getElementById('instr-app-name-2').textContent = appName;
+  safeText('instr-app-name', appName);
+  safeText('instr-app-name-2', appName);
 
   if(via === 'whatsapp'){
-    document.getElementById('instr-banner-sub').innerHTML = 'Open straks <b>WhatsApp</b> en voeg het PDF toe als bijlage';
-    document.getElementById('instr-step1-detail').textContent = 'WhatsApp opent automatisch met het juiste contact en bericht al voor je ingevuld.';
-    document.getElementById('instr-step2-detail').innerHTML = 'In WhatsApp staat het paperclip-icoontje rechts naast het bericht-veld. Kies dan <b>"Document"</b>.';
-    document.getElementById('instr-action-icon').innerHTML = '&#128172;';
-    document.getElementById('instr-action-text').textContent = 'Open WhatsApp opnieuw';
-    document.getElementById('instr-action-btn').className = 'instr-action-btn';
+    safeHtml('instr-banner-sub', 'Open straks <b>WhatsApp</b> en voeg het PDF toe als bijlage');
+    safeText('instr-step1-detail', 'WhatsApp opent automatisch met het juiste contact en bericht al voor je ingevuld.');
+    safeHtml('instr-step2-detail', 'In WhatsApp staat het paperclip-icoontje rechts naast het bericht-veld. Kies dan <b>"Document"</b>.');
+    safeHtml('instr-action-icon', '&#128172;');
+    safeText('instr-action-text', 'Open WhatsApp opnieuw');
+    var iab1 = document.getElementById('instr-action-btn'); if(iab1) iab1.className = 'instr-action-btn';
   } else {
-    document.getElementById('instr-banner-sub').innerHTML = 'Open straks <b>je e-mail-app</b> en voeg het PDF toe als bijlage';
-    document.getElementById('instr-step1-detail').textContent = 'Je e-mail-app opent automatisch met de juiste ontvanger en tekst al voor je ingevuld.';
-    document.getElementById('instr-step2-detail').innerHTML = 'In de e-mail-app staat een <b>"Bijlage toevoegen"</b> knop (vaak een paperclip of plus-symbool).';
-    document.getElementById('instr-action-icon').innerHTML = '&#9993;';
-    document.getElementById('instr-action-text').textContent = 'Open e-mail-app opnieuw';
-    document.getElementById('instr-action-btn').className = 'instr-action-btn mail';
+    safeHtml('instr-banner-sub', 'Open straks <b>je e-mail-app</b> en voeg het PDF toe als bijlage');
+    safeText('instr-step1-detail', 'Je e-mail-app opent automatisch met de juiste ontvanger en tekst al voor je ingevuld.');
+    safeHtml('instr-step2-detail', 'In de e-mail-app staat een <b>"Bijlage toevoegen"</b> knop (vaak een paperclip of plus-symbool).');
+    safeHtml('instr-action-icon', '&#9993;');
+    safeText('instr-action-text', 'Open e-mail-app opnieuw');
+    var iab2 = document.getElementById('instr-action-btn'); if(iab2) iab2.className = 'instr-action-btn mail';
   }
 
   // Toon Android-tip alleen op Android
@@ -1250,6 +1261,7 @@ function startCountdown(){
   var seconds = 3;
   var cd = document.getElementById('instr-countdown');
   var num = document.getElementById('instr-countdown-num');
+  if(!cd || !num) return;
   cd.style.display = 'block';
   num.textContent = seconds;
   _countdownInterval = setInterval(function(){
@@ -1626,7 +1638,7 @@ function clearBijlage(type, ev){
 function updateBijlageBtn(type, fname){
   var label = document.getElementById('bij-' + type + '-label');
   var nameEl = document.getElementById('bij-' + type + '-fname');
-  if(!label) return;
+  if(!label || !nameEl) return;
   if(fname){
     label.classList.add('has-file');
     nameEl.innerHTML = '&#10003; ' + escHtml(fname.length>22?fname.substring(0,22)+'...':fname) +
