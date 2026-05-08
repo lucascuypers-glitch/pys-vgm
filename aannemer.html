@@ -176,6 +176,45 @@ select option{background:#1e293b;}
 .cb-whatsapp{background:linear-gradient(90deg,#16a34a,#22c55e);color:#fff;box-shadow:0 4px 14px rgba(34,197,94,.35);}
 .cb-back{background:#1e293b;color:#94a3b8;border:1.5px solid #334155;}
 
+
+/* DUIDELIJK INSTRUCTIE-SCHERM */
+.instruction-wrap{padding:14px;}
+.instruction-banner{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border-radius:14px;padding:18px 16px;text-align:center;margin-bottom:14px;box-shadow:0 6px 24px rgba(34,197,94,.3);}
+.instr-banner-icon{font-size:2.2rem;margin-bottom:4px;}
+.instr-banner-title{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;line-height:1.2;}
+.instr-banner-sub{font-size:.85rem;opacity:.95;margin-top:4px;line-height:1.4;}
+
+.instr-pdfname{background:#0a1628;border:2px solid #f97316;border-radius:12px;padding:12px 14px;margin-bottom:14px;}
+.instr-pdfname-lbl{font-size:.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
+.instr-pdfname-name{font-family:'Courier New',monospace;font-size:.82rem;color:#fbbf24;word-break:break-all;line-height:1.4;font-weight:700;}
+.instr-redownload{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:9px;background:rgba(249,115,22,.12);border:1.5px solid rgba(249,115,22,.4);border-radius:8px;color:#fb923c;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;}
+
+.instr-steps{background:#1e293b;border-radius:14px;padding:14px;margin-bottom:14px;}
+.instr-steps-title{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:800;color:#fb923c;margin-bottom:12px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;}
+.instr-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.instr-step:last-child{margin-bottom:0;}
+.instr-step-num{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#ea580c,#f97316);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:800;box-shadow:0 3px 10px rgba(249,115,22,.3);}
+.instr-step-body{flex:1;padding-top:3px;}
+.instr-step-action{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:#f1f5f9;line-height:1.3;}
+.instr-step-detail{font-size:.78rem;color:#94a3b8;margin-top:3px;line-height:1.4;}
+.instr-step-icon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:rgba(249,115,22,.15);color:#fb923c;margin:0 3px;vertical-align:middle;font-size:.95rem;}
+
+.instr-action-btn{width:100%;padding:16px;background:linear-gradient(90deg,#16a34a,#22c55e);border:none;border-radius:14px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 6px 20px rgba(34,197,94,.4);margin-bottom:8px;}
+.instr-action-btn.mail{background:linear-gradient(90deg,#3b82f6,#60a5fa);box-shadow:0 6px 20px rgba(59,130,246,.4);}
+.instr-action-btn.disabled{opacity:.5;cursor:not-allowed;}
+.instr-countdown{text-align:center;font-size:.75rem;color:#94a3b8;margin-top:8px;}
+.instr-countdown b{color:#f97316;font-family:'Barlow Condensed',sans-serif;font-weight:800;}
+.instr-back-btn{width:100%;margin-top:10px;padding:11px;background:transparent;border:1.5px solid #334155;border-radius:10px;color:#94a3b8;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;}
+
+/* Visual paperclip animation */
+.instr-visual{background:#0a1628;border-radius:10px;padding:10px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:.78rem;color:#cbd5e1;}
+.iv-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;}
+.iv-step{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:#1e293b;border:1px solid #334155;border-radius:20px;font-size:.72rem;}
+.iv-arrow{color:#f97316;font-weight:700;}
+
+/* Open downloads button (Android tip) */
+.instr-android-tip{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:.72rem;color:#93c5fd;display:flex;align-items:center;gap:6px;}
+
 </style>
 </head>
 <body>
@@ -914,19 +953,101 @@ function _genAndDownloadPdf(){
   return fname;
 }
 
-function _showSuccessPanel(via, fname){
+// Bewaar laatst gegenereerde PDF zodat we hem opnieuw kunnen downloaden
+var _lastPdfDoc = null;
+var _lastPdfFname = '';
+var _lastVia = '';
+var _lastTargetUrl = '';
+var _countdownInterval = null;
+
+function _showSuccessPanel(via, fname, doc, targetUrl){
+  _lastPdfDoc = doc;
+  _lastPdfFname = fname;
+  _lastVia = via;
+  _lastTargetUrl = targetUrl || '';
+
   document.getElementById('success-screen-pre').style.display = 'none';
   document.getElementById('choice-grid').style.display = 'none';
   document.getElementById('success-screen-post').style.display = 'block';
+
+  // PDF-naam invullen
+  document.getElementById('instr-pdf-name').textContent = fname;
+
+  // Banner + stappen aanpassen per kanaal
+  var appName = via === 'whatsapp' ? 'WhatsApp' : 'je e-mail-app';
+  document.getElementById('instr-app-name').textContent = appName;
+  document.getElementById('instr-app-name-2').textContent = appName;
+
   if(via === 'whatsapp'){
-    document.getElementById('success-title').textContent = 'PDF gedownload — voeg toe in WhatsApp';
-    document.getElementById('success-txt').innerHTML = 'WhatsApp opent nu. <b style="color:#4ade80;">Tik op het paperclip-icoontje (📎) en kies het zojuist gedownloade PDF-bestand</b> als bijlage. Druk dan op verzenden.';
-    document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Tip:</b> Het PDF staat in je Downloads-map. In WhatsApp: paperclip → Document → kies dit PDF.';
+    document.getElementById('instr-banner-sub').innerHTML = 'Open straks <b>WhatsApp</b> en voeg het PDF toe als bijlage';
+    document.getElementById('instr-step1-detail').textContent = 'WhatsApp opent automatisch met het juiste contact en bericht al voor je ingevuld.';
+    document.getElementById('instr-step2-detail').innerHTML = 'In WhatsApp staat het paperclip-icoontje rechts naast het bericht-veld. Kies dan <b>"Document"</b>.';
+    document.getElementById('instr-action-icon').innerHTML = '&#128172;';
+    document.getElementById('instr-action-text').textContent = 'Open WhatsApp opnieuw';
+    document.getElementById('instr-action-btn').className = 'instr-action-btn';
   } else {
-    document.getElementById('success-title').textContent = 'PDF gedownload — voeg toe aan e-mail';
-    document.getElementById('success-txt').innerHTML = 'Je e-mail-app opent nu. <b style="color:#60a5fa;">Voeg het PDF toe als bijlage</b> en klik op verzenden.';
-    document.getElementById('success-info').innerHTML = '<b>PDF-bestandsnaam:</b><br><span style="font-family:monospace;color:#fbbf24;font-size:.78rem;">' + fname + '</span><br><br><b>Tip:</b> Eerst PDF opzoeken in Downloads-map, dan koppelen aan de mail.';
+    document.getElementById('instr-banner-sub').innerHTML = 'Open straks <b>je e-mail-app</b> en voeg het PDF toe als bijlage';
+    document.getElementById('instr-step1-detail').textContent = 'Je e-mail-app opent automatisch met de juiste ontvanger en tekst al voor je ingevuld.';
+    document.getElementById('instr-step2-detail').innerHTML = 'In de e-mail-app staat een <b>"Bijlage toevoegen"</b> knop (vaak een paperclip of plus-symbool).';
+    document.getElementById('instr-action-icon').innerHTML = '&#9993;';
+    document.getElementById('instr-action-text').textContent = 'Open e-mail-app opnieuw';
+    document.getElementById('instr-action-btn').className = 'instr-action-btn mail';
   }
+
+  // Toon Android-tip alleen op Android
+  if(/Android/i.test(navigator.userAgent)){
+    document.getElementById('instr-android-tip').style.display = 'flex';
+  }
+
+  // Start 3-seconden countdown — geeft browser tijd om download-melding te tonen
+  startCountdown();
+
+  // Scroll naar boven
+  window.scrollTo(0, 0);
+}
+
+function startCountdown(){
+  if(_countdownInterval) clearInterval(_countdownInterval);
+  var seconds = 3;
+  var cd = document.getElementById('instr-countdown');
+  var num = document.getElementById('instr-countdown-num');
+  cd.style.display = 'block';
+  num.textContent = seconds;
+  _countdownInterval = setInterval(function(){
+    seconds--;
+    if(seconds <= 0){
+      clearInterval(_countdownInterval);
+      _countdownInterval = null;
+      cd.style.display = 'none';
+      reopenTarget();
+    } else {
+      num.textContent = seconds;
+    }
+  }, 1000);
+}
+
+function reopenTarget(){
+  if(_countdownInterval){ clearInterval(_countdownInterval); _countdownInterval = null; }
+  document.getElementById('instr-countdown').style.display = 'none';
+  if(_lastTargetUrl){
+    window.location.href = _lastTargetUrl;
+  }
+}
+
+function redownloadPdf(){
+  if(_lastPdfDoc && _lastPdfFname){
+    try{ _lastPdfDoc.save(_lastPdfFname); showToast('PDF opnieuw gedownload', 'success'); }
+    catch(e){ showToast('Fout bij download', 'err'); }
+  } else {
+    showToast('PDF niet meer beschikbaar — vul opnieuw in', 'err');
+  }
+}
+
+function resetSuccessFlow(){
+  if(_countdownInterval){ clearInterval(_countdownInterval); _countdownInterval = null; }
+  document.getElementById('success-screen-post').style.display = 'none';
+  document.getElementById('success-screen-pre').style.display = 'block';
+  document.getElementById('choice-grid').style.display = 'flex';
 }
 
 function submitViaMail(){
@@ -934,31 +1055,34 @@ function submitViaMail(){
   showToast('PDF wordt aangemaakt...', '');
   setTimeout(function(){
     try{
-      var fname = _genAndDownloadPdf();
-      setTimeout(function(){
-        var ourEmail = werfInfo.email || 'info@poweryourself.be';
-        var subject = encodeURIComponent('VGM Aannemer-formulier - ' + (val('f-naam')||'') + ' - ' + (werfInfo.werf||''));
-        var body = encodeURIComponent(
-          'Beste,\n\n'+
-          'In bijlage vindt u het ingevulde aannemer-veiligheidsformulier (RI&E + Intentieverklaring).\n\n'+
-          '-- Werfgegevens --\n'+
-          'Werf: ' + (werfInfo.werf||'-') + '\n'+
-          'Adres: ' + (werfInfo.adres||'-') + '\n'+
-          'Klant: ' + (werfInfo.klant||'-') + '\n\n'+
-          '-- Onderneming --\n'+
-          'Naam: ' + val('f-naam') + '\n'+
-          'BTW: ' + val('f-btw') + '\n'+
-          'E-mail: ' + val('f-email') + '\n'+
-          'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n\n'+
-          'BELANGRIJK: gelieve het PDF dat hieronder werd gedownload manueel als bijlage toe te voegen aan deze e-mail.\n\n'+
-          'PDF-bestandsnaam: ' + fname + '\n\n'+
-          'Met vriendelijke groeten,\n'+
-          val('f-vw-naam') + '\n' + val('f-naam')
-        );
-        window.location.href = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
-      }, 500);
-      _showSuccessPanel('mail', fname);
-      showToast('Voeg PDF toe als bijlage aan de mail', 'success');
+      // Genereer PDF + bewaar voor opnieuw downloaden
+      var pdfDoc = buildPdf();
+      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+      pdfDoc.save(fname);
+
+      // Bouw mailto-URL
+      var ourEmail = werfInfo.email || 'info@poweryourself.be';
+      var subject = encodeURIComponent('VGM Aannemer-formulier - ' + (val('f-naam')||'') + ' - ' + (werfInfo.werf||''));
+      var body = encodeURIComponent(
+        'Beste,\n\n'+
+        'In bijlage vindt u het ingevulde aannemer-veiligheidsformulier (RI&E + Intentieverklaring).\n\n'+
+        '-- Werfgegevens --\n'+
+        'Werf: ' + (werfInfo.werf||'-') + '\n'+
+        'Adres: ' + (werfInfo.adres||'-') + '\n'+
+        'Klant: ' + (werfInfo.klant||'-') + '\n\n'+
+        '-- Onderneming --\n'+
+        'Naam: ' + val('f-naam') + '\n'+
+        'BTW: ' + val('f-btw') + '\n'+
+        'E-mail: ' + val('f-email') + '\n'+
+        'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n\n'+
+        'BELANGRIJK: gelieve het PDF "' + fname + '" toe te voegen als bijlage aan deze e-mail.\n\n'+
+        'Met vriendelijke groeten,\n'+
+        val('f-vw-naam') + '\n' + val('f-naam')
+      );
+      var mailUrl = 'mailto:' + ourEmail + '?subject=' + subject + '&body=' + body;
+
+      // Toon eerst het instructie-scherm met countdown — pas daarna mail openen
+      _showSuccessPanel('mail', fname, pdfDoc, mailUrl);
     } catch(e){
       console.error(e);
       showToast('Fout bij PDF: ' + e.message, 'err');
@@ -971,27 +1095,26 @@ function submitViaWhatsApp(){
   showToast('PDF wordt aangemaakt...', '');
   setTimeout(function(){
     try{
-      var fname = _genAndDownloadPdf();
-      setTimeout(function(){
-        // PowerYourself WhatsApp number — Lucas Cuypers
-        var phone = '32476864138'; // internationaal formaat zonder + of 00
-        var msg = encodeURIComponent(
-          'VGM Aannemer-formulier — PowerYourself\n\n'+
-          '-- Werf --\n'+
-          'Werf: ' + (werfInfo.werf||'-') + '\n'+
-          'Adres: ' + (werfInfo.adres||'-') + '\n\n'+
-          '-- Onderneming --\n'+
-          'Naam: ' + val('f-naam') + '\n'+
-          'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n'+
-          'E-mail: ' + val('f-email') + '\n\n'+
-          'In bijlage vindt u het PDF (RI&E + Intentieverklaring).\n'+
-          'Bestandsnaam: ' + fname
-        );
-        // wa.me universele link werkt op desktop én mobile
-        window.location.href = 'https://wa.me/' + phone + '?text=' + msg;
-      }, 500);
-      _showSuccessPanel('whatsapp', fname);
-      showToast('WhatsApp geopend — voeg PDF toe als bijlage', 'success');
+      var pdfDoc = buildPdf();
+      var fname = 'Aannemer_' + ((val('f-naam')||'onbekend').replace(/[^a-zA-Z0-9]/g,'_')) + '_' + (val('f-datum') || new Date().toISOString().split('T')[0]) + '.pdf';
+      pdfDoc.save(fname);
+
+      var phone = '32476864138';
+      var msg = encodeURIComponent(
+        'VGM Aannemer-formulier — PowerYourself\n\n'+
+        '-- Werf --\n'+
+        'Werf: ' + (werfInfo.werf||'-') + '\n'+
+        'Adres: ' + (werfInfo.adres||'-') + '\n\n'+
+        '-- Onderneming --\n'+
+        'Naam: ' + val('f-naam') + '\n'+
+        'Werfverantwoordelijke: ' + val('f-vw-naam') + '\n'+
+        'E-mail: ' + val('f-email') + '\n\n'+
+        'In bijlage vindt u het PDF (RI&E + Intentieverklaring).\n'+
+        'Bestandsnaam: ' + fname
+      );
+      var waUrl = 'https://wa.me/' + phone + '?text=' + msg;
+
+      _showSuccessPanel('whatsapp', fname, pdfDoc, waUrl);
     } catch(e){
       console.error(e);
       showToast('Fout bij PDF: ' + e.message, 'err');
