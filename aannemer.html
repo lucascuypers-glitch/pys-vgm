@@ -215,6 +215,18 @@ select option{background:#1e293b;}
 /* Open downloads button (Android tip) */
 .instr-android-tip{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:.72rem;color:#93c5fd;display:flex;align-items:center;gap:6px;}
 
+
+/* WERFADRES NAVIGATIE KNOPPEN */
+.werf-adres-row{display:flex;align-items:flex-start;gap:6px;margin:2px 0;}
+.werf-adres-txt{flex:1;min-width:0;}
+.nav-btns-inline{display:flex;gap:4px;flex-shrink:0;}
+.nav-btn-inline{background:#1e293b;border:1px solid #334155;border-radius:7px;padding:5px 8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;text-decoration:none;color:#cbd5e1;line-height:1;}
+.nav-btn-inline:hover{border-color:#f97316;}
+.nav-btn-inline.gmaps{background:rgba(66,133,244,.12);border-color:rgba(66,133,244,.4);color:#93b5e8;}
+.nav-btn-inline.waze{background:rgba(0,180,255,.12);border-color:rgba(0,180,255,.4);color:#7dd3fc;}
+.nav-btn-inline.apple{background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.4);color:#cbd5e1;}
+.nav-btn-icon{width:14px;height:14px;display:inline-block;}
+
 </style>
 </head>
 <body>
@@ -511,15 +523,40 @@ function loadFromUrl(){
     start:   p.get('start')   || '',
     contact: p.get('contact') || 'Lucas Cuypers',
     email:   p.get('email')   || 'info@poweryourself.be',
-    type:    p.get('type')    || 'beide'  // 'rie', 'iv', or 'beide'
+    type:    p.get('type')    || 'beide'
   };
   var html = '';
   if(werfInfo.werf) html += '<b>Werf:</b> ' + escHtml(werfInfo.werf) + '<br>';
-  if(werfInfo.adres) html += '<b>Adres:</b> ' + escHtml(werfInfo.adres) + '<br>';
+
+  // Adres met navigatie-knoppen ernaast
+  if(werfInfo.adres){
+    var adresEnc = encodeURIComponent(werfInfo.adres);
+    var gmapsUrl = 'https://www.google.com/maps/dir/?api=1&destination=' + adresEnc;
+    var wazeUrl  = 'https://waze.com/ul?q=' + adresEnc + '&navigate=yes';
+    var appleUrl = 'https://maps.apple.com/?daddr=' + adresEnc;
+    var isApple  = /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent);
+
+    html += '<div class="werf-adres-row">'
+      + '<div class="werf-adres-txt"><b>Adres:</b> ' + escHtml(werfInfo.adres) + '</div>'
+      + '<div class="nav-btns-inline">'
+      + '<a class="nav-btn-inline gmaps" href="' + gmapsUrl + '" target="_blank" rel="noopener" title="Open in Google Maps">'
+      +   '<span>&#128205;</span><span>Maps</span>'
+      + '</a>'
+      + '<a class="nav-btn-inline waze" href="' + wazeUrl + '" target="_blank" rel="noopener" title="Open in Waze">'
+      +   '<span>&#128663;</span><span>Waze</span>'
+      + '</a>'
+      + (isApple ? '<a class="nav-btn-inline apple" href="' + appleUrl + '" target="_blank" rel="noopener" title="Open in Apple Maps"><span>&#63743;</span><span>Maps</span></a>' : '')
+      + '</div>'
+      + '</div>';
+  }
+
   if(werfInfo.klant) html += '<b>Klant:</b> ' + escHtml(werfInfo.klant) + '<br>';
   if(werfInfo.start) html += '<b>Startdatum:</b> ' + escHtml(werfInfo.start) + '<br>';
-  if(!html) html = '<b>Geen werfgegevens ontvangen.</b><br>Vraag je opdrachtgever om een nieuwe link.';
-  else html += '<br><b style="color:#94a3b8;">Contact:</b> ' + escHtml(werfInfo.contact) + ' &mdash; ' + escHtml(werfInfo.email);
+  if(!html){
+    html = '<b>Geen werfgegevens ontvangen.</b><br>Vraag je opdrachtgever om een nieuwe link.';
+  } else {
+    html += '<br><b style="color:#94a3b8;">Contact:</b> ' + escHtml(werfInfo.contact) + ' &mdash; ' + escHtml(werfInfo.email);
+  }
   document.getElementById('welcome-werf').innerHTML = html;
 }
 
